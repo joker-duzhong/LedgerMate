@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 生活服务</title>
+  <path d="M32 7C26 17 12 28 12 38a20 20 0 0 0 40 0C52 28 38 17 32 7Z" fill="#548FF3"/>
+      <path d="M20 34c2-5 6-9 10-14" stroke="#FFFFFF" stroke-width="2.6"/>
+      <path d="m33 25-11 15h8l-1 12 13-18h-9Z" fill="#FFDF43"/>
+</svg>

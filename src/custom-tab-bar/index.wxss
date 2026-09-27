@@ -1,0 +1,6 @@
+.tab-bar{position:fixed;z-index:90;left:0;right:0;bottom:0;background:#fff;border-top:1rpx solid #eee9dc;padding:8rpx 20rpx calc(12rpx + env(safe-area-inset-bottom))}
+.tab-inner{display:flex;align-items:center;max-width:960rpx;margin:auto;height:110rpx}
+.tab-item{position:relative;display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;gap:7rpx;height:106rpx;padding:0;margin:0;border:0;background:none;color:#77776e;font-size:23rpx;line-height:1.3;overflow:visible}
+.tab-item::after{border:0}.selected{color:#292a25}.tab-icon{width:46rpx;height:46rpx}.tab-center{flex:0 0 140rpx;margin:0 10rpx}
+.add-pill{display:flex;justify-content:center;align-items:center;width:104rpx;height:68rpx;border:3rpx solid #514c34;background:#ffdf60;border-radius:40rpx;margin-top:16rpx}
+.add-pill image{width:44rpx;height:44rpx}.duck-peek{position:absolute;top:-32rpx;width:60rpx;height:60rpx;border-radius:50%;border:3rpx solid #fff;background:#ffe477}

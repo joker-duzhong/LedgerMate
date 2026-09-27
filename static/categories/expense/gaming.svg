@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 网络虚拟</title>
+  <path d="M32 21c0-6 14-3 13-9S24 13 19 8"/>
+      <path d="M20 21h24c9 0 12 9 12 17 0 7-3 11-8 11-6 0-7-8-13-8h-6c-6 0-7 8-13 8-5 0-8-4-8-11 0-8 3-17 12-17Z" fill="#A66DE4"/>
+      <path d="M13 34c1-5 3-8 7-8h8" stroke="#FFFFFF" stroke-width="2.5"/>
+      <path d="M19 29v12M13 35h12" stroke="#292A2B" stroke-width="6"/>
+      <path d="M19 30v10M14 35h10" stroke="#FFFFFF" stroke-width="2.4"/>
+      <circle cx="46" cy="30" r="3" fill="#FFAA35"/>
+      <circle cx="40" cy="38" r="3" fill="#FFDF43"/>
+</svg>

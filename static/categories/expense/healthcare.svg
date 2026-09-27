@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 医疗保健</title>
+  <path d="M21 27h-9a4 4 0 0 0-4 4v24h14m20-28h10a4 4 0 0 1 4 4v24H42" fill="#548FF3"/>
+      <path d="M22 55V13a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v42Z" fill="#6ED779"/>
+      <path d="M26 36V15h7" stroke="#FFFFFF" stroke-width="2.4"/>
+      <path d="M27 23h10M32 18v10"/>
+      <path d="M29 55V42h7v13" fill="#FFFFFF"/>
+      <path d="M12 34v17" stroke="#FFFFFF" stroke-width="2.4"/>
+      <path d="M47 35v5m0 6v5"/>
+</svg>

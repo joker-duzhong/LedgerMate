@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 买菜</title>
+  <path d="m32 19 2-10 4 5 5-6-2 13Z" fill="#6ED779"/>
+      <path d="M30 18c3-3 9 0 10 3 3 7-19 27-30 33 3-13 15-31 20-36Z" fill="#FF5874"/>
+      <path d="m44 31 6-9 1 6 6-3-5 11Z" fill="#6ED779"/>
+      <path d="M41 31c3-3 10 0 11 4 2 5-14 20-22 23 1-10 7-23 11-27Z" fill="#FF5874"/>
+      <path d="m26 27 5 3M19 37l5 3M40 40l6 2M36 49l4 2"/>
+      <path d="m30 23-6 8M42 35l-3 5" stroke="#FFFFFF" stroke-width="2.3"/>
+</svg>

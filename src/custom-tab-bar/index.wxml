@@ -1,0 +1,14 @@
+<view wx:if="{{!hidden}}" class="tab-bar">
+  <view class="tab-inner">
+    <block wx:for="{{tabs}}" wx:key="pagePath">
+      <button wx:if="{{index === 2}}" class="tab-item tab-center" bindtap="openChat" aria-label="AI 记一笔">
+          <image class="duck-peek" src="/static/assistant-duck.png" mode="aspectFill" />
+          <view class="add-pill"><image src="/static/icons/ink/plus.svg" /></view>
+      </button>
+      <button class="tab-item {{selected === index ? 'selected' : ''}}" data-index="{{index}}" bindtap="switchTab" aria-label="{{item.text}}">
+        <image class="tab-icon" src="{{'/static/icons/' + (selected === index ? 'color' : 'muted') + '/' + item.icon + '.svg'}}" />
+        <text>{{item.text}}</text>
+      </button>
+    </block>
+  </view>
+</view>

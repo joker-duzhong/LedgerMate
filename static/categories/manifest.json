@@ -1,0 +1,323 @@
+{
+  "version": 1,
+  "size": 64,
+  "viewBox": "0 0 64 64",
+  "strokeWidth": 2.7,
+  "icons": [
+    {
+      "type": "income",
+      "name": "salary",
+      "label": "工资",
+      "file": "income/salary.svg",
+      "src": "/static/icons/categories/income/salary.svg"
+    },
+    {
+      "type": "income",
+      "name": "part-time",
+      "label": "兼职",
+      "file": "income/part-time.svg",
+      "src": "/static/icons/categories/income/part-time.svg"
+    },
+    {
+      "type": "income",
+      "name": "investment",
+      "label": "投资理财",
+      "file": "income/investment.svg",
+      "src": "/static/icons/categories/income/investment.svg"
+    },
+    {
+      "type": "income",
+      "name": "social",
+      "label": "人情社交",
+      "file": "income/social.svg",
+      "src": "/static/icons/categories/income/social.svg"
+    },
+    {
+      "type": "income",
+      "name": "bonus",
+      "label": "奖金补贴",
+      "file": "income/bonus.svg",
+      "src": "/static/icons/categories/income/bonus.svg"
+    },
+    {
+      "type": "income",
+      "name": "reimbursement",
+      "label": "报销",
+      "file": "income/reimbursement.svg",
+      "src": "/static/icons/categories/income/reimbursement.svg"
+    },
+    {
+      "type": "income",
+      "name": "business",
+      "label": "生意",
+      "file": "income/business.svg",
+      "src": "/static/icons/categories/income/business.svg"
+    },
+    {
+      "type": "income",
+      "name": "second-hand",
+      "label": "卖二手",
+      "file": "income/second-hand.svg",
+      "src": "/static/icons/categories/income/second-hand.svg"
+    },
+    {
+      "type": "income",
+      "name": "allowance",
+      "label": "生活费",
+      "file": "income/allowance.svg",
+      "src": "/static/icons/categories/income/allowance.svg"
+    },
+    {
+      "type": "income",
+      "name": "lottery",
+      "label": "中奖",
+      "file": "income/lottery.svg",
+      "src": "/static/icons/categories/income/lottery.svg"
+    },
+    {
+      "type": "income",
+      "name": "red-packet",
+      "label": "收红包",
+      "file": "income/red-packet.svg",
+      "src": "/static/icons/categories/income/red-packet.svg"
+    },
+    {
+      "type": "income",
+      "name": "transfer",
+      "label": "收转账",
+      "file": "income/transfer.svg",
+      "src": "/static/icons/categories/income/transfer.svg"
+    },
+    {
+      "type": "income",
+      "name": "insurance-claim",
+      "label": "保险理赔",
+      "file": "income/insurance-claim.svg",
+      "src": "/static/icons/categories/income/insurance-claim.svg"
+    },
+    {
+      "type": "income",
+      "name": "refund",
+      "label": "退款",
+      "file": "income/refund.svg",
+      "src": "/static/icons/categories/income/refund.svg"
+    },
+    {
+      "type": "income",
+      "name": "other",
+      "label": "其他",
+      "file": "income/other.svg",
+      "src": "/static/icons/categories/income/other.svg"
+    },
+    {
+      "type": "income",
+      "name": "cashback",
+      "label": "返现",
+      "file": "income/cashback.svg",
+      "src": "/static/icons/categories/income/cashback.svg"
+    },
+    {
+      "type": "income",
+      "name": "split-bill",
+      "label": "AA",
+      "file": "income/split-bill.svg",
+      "src": "/static/icons/categories/income/split-bill.svg"
+    },
+    {
+      "type": "expense",
+      "name": "food",
+      "label": "餐饮",
+      "file": "expense/food.svg",
+      "src": "/static/icons/categories/expense/food.svg"
+    },
+    {
+      "type": "expense",
+      "name": "entertainment",
+      "label": "休闲娱乐",
+      "file": "expense/entertainment.svg",
+      "src": "/static/icons/categories/expense/entertainment.svg"
+    },
+    {
+      "type": "expense",
+      "name": "shopping",
+      "label": "购物",
+      "file": "expense/shopping.svg",
+      "src": "/static/icons/categories/expense/shopping.svg"
+    },
+    {
+      "type": "expense",
+      "name": "fashion-beauty",
+      "label": "穿搭美容",
+      "file": "expense/fashion-beauty.svg",
+      "src": "/static/icons/categories/expense/fashion-beauty.svg"
+    },
+    {
+      "type": "expense",
+      "name": "fruit-snacks",
+      "label": "水果零食",
+      "file": "expense/fruit-snacks.svg",
+      "src": "/static/icons/categories/expense/fruit-snacks.svg"
+    },
+    {
+      "type": "expense",
+      "name": "transport",
+      "label": "交通",
+      "file": "expense/transport.svg",
+      "src": "/static/icons/categories/expense/transport.svg"
+    },
+    {
+      "type": "expense",
+      "name": "daily-necessities",
+      "label": "生活日用",
+      "file": "expense/daily-necessities.svg",
+      "src": "/static/icons/categories/expense/daily-necessities.svg"
+    },
+    {
+      "type": "expense",
+      "name": "social",
+      "label": "人情社交",
+      "file": "expense/social.svg",
+      "src": "/static/icons/categories/expense/social.svg"
+    },
+    {
+      "type": "expense",
+      "name": "pets",
+      "label": "宠物",
+      "file": "expense/pets.svg",
+      "src": "/static/icons/categories/expense/pets.svg"
+    },
+    {
+      "type": "expense",
+      "name": "childcare",
+      "label": "养娃",
+      "file": "expense/childcare.svg",
+      "src": "/static/icons/categories/expense/childcare.svg"
+    },
+    {
+      "type": "expense",
+      "name": "sports",
+      "label": "运动",
+      "file": "expense/sports.svg",
+      "src": "/static/icons/categories/expense/sports.svg"
+    },
+    {
+      "type": "expense",
+      "name": "utilities",
+      "label": "生活服务",
+      "file": "expense/utilities.svg",
+      "src": "/static/icons/categories/expense/utilities.svg"
+    },
+    {
+      "type": "expense",
+      "name": "groceries",
+      "label": "买菜",
+      "file": "expense/groceries.svg",
+      "src": "/static/icons/categories/expense/groceries.svg"
+    },
+    {
+      "type": "expense",
+      "name": "housing",
+      "label": "住房",
+      "file": "expense/housing.svg",
+      "src": "/static/icons/categories/expense/housing.svg"
+    },
+    {
+      "type": "expense",
+      "name": "car",
+      "label": "爱车",
+      "file": "expense/car.svg",
+      "src": "/static/icons/categories/expense/car.svg"
+    },
+    {
+      "type": "expense",
+      "name": "red-packet",
+      "label": "发红包",
+      "file": "expense/red-packet.svg",
+      "src": "/static/icons/categories/expense/red-packet.svg"
+    },
+    {
+      "type": "expense",
+      "name": "transfer",
+      "label": "转账",
+      "file": "expense/transfer.svg",
+      "src": "/static/icons/categories/expense/transfer.svg"
+    },
+    {
+      "type": "expense",
+      "name": "education",
+      "label": "学习教育",
+      "file": "expense/education.svg",
+      "src": "/static/icons/categories/expense/education.svg"
+    },
+    {
+      "type": "expense",
+      "name": "gaming",
+      "label": "网络虚拟",
+      "file": "expense/gaming.svg",
+      "src": "/static/icons/categories/expense/gaming.svg"
+    },
+    {
+      "type": "expense",
+      "name": "tobacco-alcohol",
+      "label": "烟酒",
+      "file": "expense/tobacco-alcohol.svg",
+      "src": "/static/icons/categories/expense/tobacco-alcohol.svg"
+    },
+    {
+      "type": "expense",
+      "name": "healthcare",
+      "label": "医疗保健",
+      "file": "expense/healthcare.svg",
+      "src": "/static/icons/categories/expense/healthcare.svg"
+    },
+    {
+      "type": "expense",
+      "name": "finance-insurance",
+      "label": "金融保险",
+      "file": "expense/finance-insurance.svg",
+      "src": "/static/icons/categories/expense/finance-insurance.svg"
+    },
+    {
+      "type": "expense",
+      "name": "home-appliances",
+      "label": "家居家电",
+      "file": "expense/home-appliances.svg",
+      "src": "/static/icons/categories/expense/home-appliances.svg"
+    },
+    {
+      "type": "expense",
+      "name": "travel",
+      "label": "酒店旅行",
+      "file": "expense/travel.svg",
+      "src": "/static/icons/categories/expense/travel.svg"
+    },
+    {
+      "type": "expense",
+      "name": "charity",
+      "label": "公益",
+      "file": "expense/charity.svg",
+      "src": "/static/icons/categories/expense/charity.svg"
+    },
+    {
+      "type": "expense",
+      "name": "mutual-aid",
+      "label": "互助保障",
+      "file": "expense/mutual-aid.svg",
+      "src": "/static/icons/categories/expense/mutual-aid.svg"
+    },
+    {
+      "type": "expense",
+      "name": "other",
+      "label": "其他",
+      "file": "expense/other.svg",
+      "src": "/static/icons/categories/expense/other.svg"
+    },
+    {
+      "type": "expense",
+      "name": "repayment",
+      "label": "还款",
+      "file": "expense/repayment.svg",
+      "src": "/static/icons/categories/expense/repayment.svg"
+    }
+  ]
+}

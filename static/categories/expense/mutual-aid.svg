@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 互助保障</title>
+  <path d="M32 55S8 41 8 24c0-13 15-18 24-7 9-11 24-6 24 7 0 17-24 31-24 31Z" fill="#FF5874"/>
+      <path d="M13 26c-1-8 8-14 14-8" stroke="#FFFFFF" stroke-width="2.5"/>
+      <path d="M6 34h11l6-9 9 18 6-11h20" stroke="#FFFFFF" stroke-width="6"/>
+      <path d="M6 34h11l6-9 9 18 6-11h20"/>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 还款</title>
+  <path d="M15 22h34a6 6 0 0 1 6 6v23a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4V28a6 6 0 0 1 6-6Z" fill="#FFDF43"/>
+      <rect x="17" y="8" width="30" height="38" rx="3" fill="#FFDF43"/>
+      <path d="M22 36V13h11" stroke="#FFFFFF" stroke-width="2.5"/>
+      <path d="m26 17 6 7 6-7M25 25h14M25 30h14M32 24v12"/>
+      <path d="M9 42h46v9a4 4 0 0 1-4 4H13a4 4 0 0 1-4-4Z" fill="#FF5874"/>
+      <path d="M14 48h19" stroke="#FFFFFF" stroke-width="2.5"/>
+</svg>

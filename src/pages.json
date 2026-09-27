@@ -1,0 +1,44 @@
+{
+  "pages": [
+    { "path": "pages/startup/index", "style": { "navigationStyle": "custom", "disableScroll": true } },
+    { "path": "pages/login/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/home/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
+    { "path": "pages/assets/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
+    { "path": "pages/ai-chat/index", "style": { "navigationStyle": "custom", "disableScroll": true, "app-plus": { "softinputMode": "adjustResize" } } },
+    { "path": "pages/statistics/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
+    { "path": "pages/manage/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/category-settings/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/record-editor/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/record-detail/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/unavailable/index", "style": { "navigationStyle": "custom" } }
+  ],
+  "tabBar": {
+    // #ifdef MP-WEIXIN
+    "custom": true,
+    // #endif
+    "color": "#75756B", "selectedColor": "#292A25", "backgroundColor": "#FFFFFF", "borderStyle": "white",
+    "list": [
+      { "pagePath": "pages/home/index", "text": "明细"
+        // #ifndef MP-WEIXIN
+        , "iconPath": "static/icons/muted/ledger.svg", "selectedIconPath": "static/icons/color/ledger.svg"
+        // #endif
+      },
+      { "pagePath": "pages/assets/index", "text": "资产"
+        // #ifndef MP-WEIXIN
+        , "iconPath": "static/icons/muted/wallet.svg", "selectedIconPath": "static/icons/color/wallet.svg"
+        // #endif
+      },
+      { "pagePath": "pages/statistics/index", "text": "统计"
+        // #ifndef MP-WEIXIN
+        , "iconPath": "static/icons/muted/chart.svg", "selectedIconPath": "static/icons/color/chart.svg"
+        // #endif
+      },
+      { "pagePath": "pages/manage/index", "text": "我的"
+        // #ifndef MP-WEIXIN
+        , "iconPath": "static/icons/muted/settings.svg", "selectedIconPath": "static/icons/color/settings.svg"
+        // #endif
+      }
+    ]
+  },
+  "globalStyle": { "backgroundColor": "#FAF7ED", "backgroundColorTop": "#FFE477", "backgroundColorBottom": "#FAF7ED", "navigationBarBackgroundColor": "#FFE477", "navigationBarTextStyle": "black", "navigationBarTitleText": "账伴" }
+}

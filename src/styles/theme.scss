@@ -1,0 +1,43 @@
+$canvas: #FAF7ED;
+$paper: #FFFFFF;
+$ink: #292A25;
+$muted: #75756B;
+$line: #DDCFA9;
+$brand: #FFDA4A;
+$brand-dark: #5B4A16;
+$brand-soft: #FFF1AE;
+$income: #188544;
+$expense: #188544;
+$danger: #B94738;
+
+@mixin tab-page-bottom {
+  padding-bottom: 192rpx;
+  padding-bottom: calc(192rpx + env(safe-area-inset-bottom, 0px));
+}
+
+.page-shell { min-height: 100vh; max-width: 960rpx; margin: 0 auto; padding: var(--app-status-bar-height, 44px) 36rpx calc(168rpx + env(safe-area-inset-bottom)); box-sizing: border-box; }
+.capsule-safe { display: flex; align-items: center; min-height: var(--app-nav-bar-height, 44px); padding-right: var(--app-capsule-right, 104px); }
+.page-title { display: block; color: $ink; font-size: 44rpx; line-height: 1.35; font-weight: 600; letter-spacing: 1rpx; }
+.page-subtitle { display: block; margin-top: 12rpx; color: $muted; font-size: 25rpx; line-height: 1.6; }
+.card { background: $paper; border: 2rpx solid $line; border-radius: 32rpx; box-shadow: 0 5rpx 0 #E4D8B7; }
+.primary-button, .ghost-button { display: flex; align-items: center; justify-content: center; gap: 12rpx; min-height: 96rpx; padding: 0 28rpx; margin: 0; box-sizing: border-box; border-radius: 24rpx; font-size: 28rpx; line-height: 1.4; font-weight: 600; }
+.primary-button { background: $brand; color: $ink; }
+.primary-button:active { background: #F4CD34; }
+.primary-button[disabled] { background: $brand-soft; color: $muted; }
+.ghost-button { background: #F6EFDA; color: $ink; border: 1rpx solid $line; }
+.ghost-button:active { background: $brand-soft; }
+.ghost-button[disabled] { color: $muted; opacity: .6; }
+.icon-button { display: flex; align-items: center; justify-content: center; flex-shrink: 0; width: 88rpx; height: 88rpx; padding: 0; margin: 0; border-radius: 22rpx; background: transparent; color: $ink; line-height: 1; }
+.icon-button:active { background: $brand-soft; }
+.icon-button[disabled] { opacity: .35; }
+.segmented { display: flex; padding: 6rpx; border-radius: 40rpx; background: #F5F4EF; }
+.segmented > button { flex: 1; min-height: 76rpx; margin: 0; padding: 0 16rpx; border-radius: 16rpx; background: transparent; color: $muted; font-size: 26rpx; line-height: 76rpx; }
+.segmented > button.active { background: $brand; color: $ink; font-weight: 500; border-radius: 36rpx; }
+.state-card { padding: 60rpx 28rpx; text-align: center; }
+.state-title { display: block; margin: 24rpx 0 12rpx; color: $ink; font-size: 30rpx; font-weight: 600; }
+.state-copy { display: block; color: $muted; font-size: 26rpx; line-height: 1.7; }
+.state-card .ghost-button, .state-card .primary-button { margin: 28rpx auto 0; max-width: 340rpx; }
+.form-error { padding: 24rpx; margin-bottom: 24rpx; border: 1rpx solid #EBCAC1; border-radius: 20rpx; background: #FFF1EB; color: $danger; font-size: 25rpx; line-height: 1.6; overflow-wrap: anywhere; }
+.money { font-variant-numeric: tabular-nums; font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', sans-serif; }
+.text-income { color: $income; }
+.text-expense { color: $expense; }

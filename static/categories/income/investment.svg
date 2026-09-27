@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 投资理财</title>
+  <path d="M9 52V32h6v20" fill="#FF5874"/>
+      <path d="M23 52V20h6v32" fill="#A66DE4"/>
+      <path d="M37 52V29h6v23" fill="#548FF3"/>
+      <path d="M51 52V9h6v43" fill="#FFAA35"/>
+      <path d="M7 57h51"/>
+      <path d="M11 35v13M25 23v25M39 32v16M53 12v36" stroke="#FFFFFF" stroke-width="1.2"/>
+</svg>

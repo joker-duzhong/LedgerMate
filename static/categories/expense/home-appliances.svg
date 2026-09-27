@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 家居家电</title>
+  <path d="m24 8 8 8 9-8"/>
+      <rect x="8" y="16" width="48" height="36" rx="5" fill="#548FF3"/>
+      <path d="M13 45V23a2 2 0 0 1 2-2h29" stroke="#FFFFFF" stroke-width="2.5"/>
+      <rect x="17" y="25" width="26" height="20" rx="2" fill="#FFAA35"/>
+      <path d="M21 40V29h8" stroke="#FFDF43" stroke-width="2.4"/>
+      <path d="M48 25h2m-2 7h2M17 52v4m30-4v4"/>
+</svg>

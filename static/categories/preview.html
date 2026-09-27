@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>账伴 · 分类图标</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root { --icon-size: 64px; color: #292A2B; font: 15px/1.5 system-ui, 'Microsoft YaHei', sans-serif; background: #FAF7ED; }
+    body { margin: 0; background-image: linear-gradient(#EAE4D233 1px, transparent 1px), linear-gradient(90deg, #EAE4D233 1px, transparent 1px); background-size: 28px 28px; }
+    main { max-width: 1280px; margin: 0 auto; padding: 40px 28px 48px; }
+    header { margin-bottom: 28px; }
+    .eyebrow { margin: 0 0 8px; color: #766A42; font-size: 13px; }
+    h1 { font-size: 30px; margin: 0 0 10px; font-weight: 650; }
+    .intro { margin: 0; color: #68685E; }
+    .toolbar { display: flex; align-items: center; flex-wrap: wrap; gap: 16px 24px; padding: 18px 0; border-block: 1px solid #DFD6BA; margin-bottom: 28px; }
+    fieldset { border: 0; padding: 0; margin: 0; display: flex; align-items: center; gap: 8px; }
+    legend { float: left; margin-right: 12px; }
+    button { border: 1px solid #D8CBA3; background: white; color: inherit; font: inherit; padding: 7px 12px; border-radius: 9px; cursor: pointer; min-height: 40px; }
+    button[aria-pressed="true"] { background: #FFDF43; border-color: #CBB23B; }
+    .background-toggle { display: flex; align-items: center; gap: 7px; cursor: pointer; min-height: 40px; }
+    input { width: 17px; height: 17px; accent-color: #766126; }
+    a { color: inherit; }
+    .toolbar > a { color: #645326; text-underline-offset: 4px; }
+    a:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid #548FF3; outline-offset: 4px; }
+    .sheets { display: grid; grid-template-columns: 1fr 1fr; gap: 44px; align-items: start; }
+    .section-heading { display: flex; gap: 12px; align-items: baseline; border-bottom: 1px solid #DFD6BA; padding-bottom: 12px; margin-bottom: 12px; }
+    h2 { margin: 0; font-size: 21px; font-weight: 650; }
+    .section-heading span { color: #767265; font-size: 13px; }
+    .grid { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 20px 8px; }
+    .item { display: flex; flex-direction: column; align-items: center; text-align: center; text-decoration: none; min-width: 0; padding: 8px 0; border-radius: 12px; }
+    .disc { display: grid; place-items: center; width: 84px; height: 84px; border-radius: 50%; background: #FFF; }
+    .disc img { display: block; width: var(--icon-size); height: var(--icon-size); }
+    .label { margin-top: 10px; font-size: 16px; }
+    code { max-width: 100%; font-size: 10px; color: #79776B; overflow-wrap: anywhere; margin-top: 3px; }
+    .item:hover .label { text-decoration: underline; text-underline-offset: 4px; }
+    .checker .disc { border-radius: 10px; background: repeating-conic-gradient(#E6E3DC 0% 25%, #FFF 0% 50%) 0 0 / 12px 12px; }
+    footer { margin-top: 32px; color: #79776B; font-size: 13px; }
+    @media (max-width: 1060px) { .sheets { grid-template-columns: 1fr; gap: 36px; } main { max-width: 740px; } }
+    @media (max-width: 480px) { main { padding: 24px 16px; } h1 { font-size: 26px; } .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    @media print { .toolbar { display: none; } main { padding: 0; } .sheets { gap: 24px; } .item { break-inside: avoid; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header><p class="eyebrow">账伴 / 本地素材库</p><h1>每一笔，都有自己的图标。</h1><p class="intro">45 个分类 · 彩色圆角描边 · 透明背景 SVG</p></header>
+    <div class="toolbar">
+      <fieldset><legend>显示尺寸</legend><button type="button" data-size="32" aria-pressed="false">32 px</button><button type="button" data-size="48" aria-pressed="false">48 px</button><button type="button" data-size="64" aria-pressed="true">64 px</button></fieldset>
+      <label class="background-toggle"><input type="checkbox" id="checker" /> 检查透明背景</label>
+      <a href="README.md">分类文件对照</a>
+    </div>
+    <div class="sheets">
+    <section aria-labelledby="income-title">
+      <div class="section-heading"><h2 id="income-title">收入</h2><span>17 个分类</span></div>
+      <div class="grid">
+        <a class="item" href="income/salary.svg" title="查看 工资 SVG">
+          <span class="disc"><img src="income/salary.svg" width="64" height="64" alt="" /></span>
+          <span class="label">工资</span>
+          <code>salary</code>
+        </a>
+        <a class="item" href="income/part-time.svg" title="查看 兼职 SVG">
+          <span class="disc"><img src="income/part-time.svg" width="64" height="64" alt="" /></span>
+          <span class="label">兼职</span>
+          <code>part-time</code>
+        </a>
+        <a class="item" href="income/investment.svg" title="查看 投资理财 SVG">
+          <span class="disc"><img src="income/investment.svg" width="64" height="64" alt="" /></span>
+          <span class="label">投资理财</span>
+          <code>investment</code>
+        </a>
+        <a class="item" href="income/social.svg" title="查看 人情社交 SVG">
+          <span class="disc"><img src="income/social.svg" width="64" height="64" alt="" /></span>
+          <span class="label">人情社交</span>
+          <code>social</code>
+        </a>
+        <a class="item" href="income/bonus.svg" title="查看 奖金补贴 SVG">
+          <span class="disc"><img src="income/bonus.svg" width="64" height="64" alt="" /></span>
+          <span class="label">奖金补贴</span>
+          <code>bonus</code>
+        </a>
+        <a class="item" href="income/reimbursement.svg" title="查看 报销 SVG">
+          <span class="disc"><img src="income/reimbursement.svg" width="64" height="64" alt="" /></span>
+          <span class="label">报销</span>
+          <code>reimbursement</code>
+        </a>
+        <a class="item" href="income/business.svg" title="查看 生意 SVG">
+          <span class="disc"><img src="income/business.svg" width="64" height="64" alt="" /></span>
+          <span class="label">生意</span>
+          <code>business</code>
+        </a>
+        <a class="item" href="income/second-hand.svg" title="查看 卖二手 SVG">
+          <span class="disc"><img src="income/second-hand.svg" width="64" height="64" alt="" /></span>
+          <span class="label">卖二手</span>
+          <code>second-hand</code>
+        </a>
+        <a class="item" href="income/allowance.svg" title="查看 生活费 SVG">
+          <span class="disc"><img src="income/allowance.svg" width="64" height="64" alt="" /></span>
+          <span class="label">生活费</span>
+          <code>allowance</code>
+        </a>
+        <a class="item" href="income/lottery.svg" title="查看 中奖 SVG">
+          <span class="disc"><img src="income/lottery.svg" width="64" height="64" alt="" /></span>
+          <span class="label">中奖</span>
+          <code>lottery</code>
+        </a>
+        <a class="item" href="income/red-packet.svg" title="查看 收红包 SVG">
+          <span class="disc"><img src="income/red-packet.svg" width="64" height="64" alt="" /></span>
+          <span class="label">收红包</span>
+          <code>red-packet</code>
+        </a>
+        <a class="item" href="income/transfer.svg" title="查看 收转账 SVG">
+          <span class="disc"><img src="income/transfer.svg" width="64" height="64" alt="" /></span>
+          <span class="label">收转账</span>
+          <code>transfer</code>
+        </a>
+        <a class="item" href="income/insurance-claim.svg" title="查看 保险理赔 SVG">
+          <span class="disc"><img src="income/insurance-claim.svg" width="64" height="64" alt="" /></span>
+          <span class="label">保险理赔</span>
+          <code>insurance-claim</code>
+        </a>
+        <a class="item" href="income/refund.svg" title="查看 退款 SVG">
+          <span class="disc"><img src="income/refund.svg" width="64" height="64" alt="" /></span>
+          <span class="label">退款</span>
+          <code>refund</code>
+        </a>
+        <a class="item" href="income/other.svg" title="查看 其他 SVG">
+          <span class="disc"><img src="income/other.svg" width="64" height="64" alt="" /></span>
+          <span class="label">其他</span>
+          <code>other</code>
+        </a>
+        <a class="item" href="income/cashback.svg" title="查看 返现 SVG">
+          <span class="disc"><img src="income/cashback.svg" width="64" height="64" alt="" /></span>
+          <span class="label">返现</span>
+          <code>cashback</code>
+        </a>
+        <a class="item" href="income/split-bill.svg" title="查看 AA SVG">
+          <span class="disc"><img src="income/split-bill.svg" width="64" height="64" alt="" /></span>
+          <span class="label">AA</span>
+          <code>split-bill</code>
+        </a>
+      </div>
+    </section>
+<section aria-labelledby="expense-title">
+      <div class="section-heading"><h2 id="expense-title">支出</h2><span>28 个分类</span></div>
+      <div class="grid">
+        <a class="item" href="expense/food.svg" title="查看 餐饮 SVG">
+          <span class="disc"><img src="expense/food.svg" width="64" height="64" alt="" /></span>
+          <span class="label">餐饮</span>
+          <code>food</code>
+        </a>
+        <a class="item" href="expense/entertainment.svg" title="查看 休闲娱乐 SVG">
+          <span class="disc"><img src="expense/entertainment.svg" width="64" height="64" alt="" /></span>
+          <span class="label">休闲娱乐</span>
+          <code>entertainment</code>
+        </a>
+        <a class="item" href="expense/shopping.svg" title="查看 购物 SVG">
+          <span class="disc"><img src="expense/shopping.svg" width="64" height="64" alt="" /></span>
+          <span class="label">购物</span>
+          <code>shopping</code>
+        </a>
+        <a class="item" href="expense/fashion-beauty.svg" title="查看 穿搭美容 SVG">
+          <span class="disc"><img src="expense/fashion-beauty.svg" width="64" height="64" alt="" /></span>
+          <span class="label">穿搭美容</span>
+          <code>fashion-beauty</code>
+        </a>
+        <a class="item" href="expense/fruit-snacks.svg" title="查看 水果零食 SVG">
+          <span class="disc"><img src="expense/fruit-snacks.svg" width="64" height="64" alt="" /></span>
+          <span class="label">水果零食</span>
+          <code>fruit-snacks</code>
+        </a>
+        <a class="item" href="expense/transport.svg" title="查看 交通 SVG">
+          <span class="disc"><img src="expense/transport.svg" width="64" height="64" alt="" /></span>
+          <span class="label">交通</span>
+          <code>transport</code>
+        </a>
+        <a class="item" href="expense/daily-necessities.svg" title="查看 生活日用 SVG">
+          <span class="disc"><img src="expense/daily-necessities.svg" width="64" height="64" alt="" /></span>
+          <span class="label">生活日用</span>
+          <code>daily-necessities</code>
+        </a>
+        <a class="item" href="expense/social.svg" title="查看 人情社交 SVG">
+          <span class="disc"><img src="expense/social.svg" width="64" height="64" alt="" /></span>
+          <span class="label">人情社交</span>
+          <code>social</code>
+        </a>
+        <a class="item" href="expense/pets.svg" title="查看 宠物 SVG">
+          <span class="disc"><img src="expense/pets.svg" width="64" height="64" alt="" /></span>
+          <span class="label">宠物</span>
+          <code>pets</code>
+        </a>
+        <a class="item" href="expense/childcare.svg" title="查看 养娃 SVG">
+          <span class="disc"><img src="expense/childcare.svg" width="64" height="64" alt="" /></span>
+          <span class="label">养娃</span>
+          <code>childcare</code>
+        </a>
+        <a class="item" href="expense/sports.svg" title="查看 运动 SVG">
+          <span class="disc"><img src="expense/sports.svg" width="64" height="64" alt="" /></span>
+          <span class="label">运动</span>
+          <code>sports</code>
+        </a>
+        <a class="item" href="expense/utilities.svg" title="查看 生活服务 SVG">
+          <span class="disc"><img src="expense/utilities.svg" width="64" height="64" alt="" /></span>
+          <span class="label">生活服务</span>
+          <code>utilities</code>
+        </a>
+        <a class="item" href="expense/groceries.svg" title="查看 买菜 SVG">
+          <span class="disc"><img src="expense/groceries.svg" width="64" height="64" alt="" /></span>
+          <span class="label">买菜</span>
+          <code>groceries</code>
+        </a>
+        <a class="item" href="expense/housing.svg" title="查看 住房 SVG">
+          <span class="disc"><img src="expense/housing.svg" width="64" height="64" alt="" /></span>
+          <span class="label">住房</span>
+          <code>housing</code>
+        </a>
+        <a class="item" href="expense/car.svg" title="查看 爱车 SVG">
+          <span class="disc"><img src="expense/car.svg" width="64" height="64" alt="" /></span>
+          <span class="label">爱车</span>
+          <code>car</code>
+        </a>
+        <a class="item" href="expense/red-packet.svg" title="查看 发红包 SVG">
+          <span class="disc"><img src="expense/red-packet.svg" width="64" height="64" alt="" /></span>
+          <span class="label">发红包</span>
+          <code>red-packet</code>
+        </a>
+        <a class="item" href="expense/transfer.svg" title="查看 转账 SVG">
+          <span class="disc"><img src="expense/transfer.svg" width="64" height="64" alt="" /></span>
+          <span class="label">转账</span>
+          <code>transfer</code>
+        </a>
+        <a class="item" href="expense/education.svg" title="查看 学习教育 SVG">
+          <span class="disc"><img src="expense/education.svg" width="64" height="64" alt="" /></span>
+          <span class="label">学习教育</span>
+          <code>education</code>
+        </a>
+        <a class="item" href="expense/gaming.svg" title="查看 网络虚拟 SVG">
+          <span class="disc"><img src="expense/gaming.svg" width="64" height="64" alt="" /></span>
+          <span class="label">网络虚拟</span>
+          <code>gaming</code>
+        </a>
+        <a class="item" href="expense/tobacco-alcohol.svg" title="查看 烟酒 SVG">
+          <span class="disc"><img src="expense/tobacco-alcohol.svg" width="64" height="64" alt="" /></span>
+          <span class="label">烟酒</span>
+          <code>tobacco-alcohol</code>
+        </a>
+        <a class="item" href="expense/healthcare.svg" title="查看 医疗保健 SVG">
+          <span class="disc"><img src="expense/healthcare.svg" width="64" height="64" alt="" /></span>
+          <span class="label">医疗保健</span>
+          <code>healthcare</code>
+        </a>
+        <a class="item" href="expense/finance-insurance.svg" title="查看 金融保险 SVG">
+          <span class="disc"><img src="expense/finance-insurance.svg" width="64" height="64" alt="" /></span>
+          <span class="label">金融保险</span>
+          <code>finance-insurance</code>
+        </a>
+        <a class="item" href="expense/home-appliances.svg" title="查看 家居家电 SVG">
+          <span class="disc"><img src="expense/home-appliances.svg" width="64" height="64" alt="" /></span>
+          <span class="label">家居家电</span>
+          <code>home-appliances</code>
+        </a>
+        <a class="item" href="expense/travel.svg" title="查看 酒店旅行 SVG">
+          <span class="disc"><img src="expense/travel.svg" width="64" height="64" alt="" /></span>
+          <span class="label">酒店旅行</span>
+          <code>travel</code>
+        </a>
+        <a class="item" href="expense/charity.svg" title="查看 公益 SVG">
+          <span class="disc"><img src="expense/charity.svg" width="64" height="64" alt="" /></span>
+          <span class="label">公益</span>
+          <code>charity</code>
+        </a>
+        <a class="item" href="expense/mutual-aid.svg" title="查看 互助保障 SVG">
+          <span class="disc"><img src="expense/mutual-aid.svg" width="64" height="64" alt="" /></span>
+          <span class="label">互助保障</span>
+          <code>mutual-aid</code>
+        </a>
+        <a class="item" href="expense/other.svg" title="查看 其他 SVG">
+          <span class="disc"><img src="expense/other.svg" width="64" height="64" alt="" /></span>
+          <span class="label">其他</span>
+          <code>other</code>
+        </a>
+        <a class="item" href="expense/repayment.svg" title="查看 还款 SVG">
+          <span class="disc"><img src="expense/repayment.svg" width="64" height="64" alt="" /></span>
+          <span class="label">还款</span>
+          <code>repayment</code>
+        </a>
+      </div>
+    </section>
+    </div>
+    <footer>点击图标可打开原始 SVG。圆形白底仅用于预览，不包含在图标文件中。</footer>
+  </main>
+  <script>
+    document.querySelectorAll('[data-size]').forEach((button) => {
+      button.addEventListener('click', () => {
+        document.documentElement.style.setProperty('--icon-size', button.dataset.size + 'px');
+        document.querySelectorAll('[data-size]').forEach((item) => item.setAttribute('aria-pressed', String(item === button)));
+      });
+    });
+    document.getElementById('checker').addEventListener('change', (event) => {
+      document.body.classList.toggle('checker', event.target.checked);
+    });
+  </script>
+</body>
+</html>

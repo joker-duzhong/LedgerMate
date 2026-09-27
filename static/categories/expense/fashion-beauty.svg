@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 穿搭美容</title>
+  <path d="m23 14-12 7-4 19 10 3 2-8v18a3 3 0 0 0 3 3h20a3 3 0 0 0 3-3V35l2 8 10-3-4-19-12-7Z" fill="#FF5874"/>
+      <path d="M22 11h20a2 2 0 0 1 2 2c0 7-5 11-12 11s-12-4-12-11a2 2 0 0 1 2-2Z" fill="#FFAA35"/>
+      <path d="M28 26v8M36 26v8"/>
+      <path d="m16 24-3 12M23 39v11" stroke="#FFFFFF" stroke-width="2.5"/>
+</svg>

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 收红包</title>
+  <rect x="12" y="8" width="40" height="49" rx="10" fill="#FF5874"/>
+      <path d="M18 47V19a5 5 0 0 1 5-5h19" stroke="#FFFFFF"/>
+      <path d="M23 18q9 10 18 0"/>
+      <path d="m25 30 7 8 7-8m-7 8v13m-9-12h18m-18 6h18"/>
+      <path d="m26 28 6 7 6-7" stroke="#FFFFFF" stroke-width="1.8"/>
+</svg>

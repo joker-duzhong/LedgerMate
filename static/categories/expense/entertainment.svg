@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 休闲娱乐</title>
+  <circle cx="32" cy="32" r="24" fill="#FF5874"/>
+      <path d="M17 15c6-5 15-6 22-3" stroke="#FFFFFF" stroke-width="2.6"/>
+      <path d="m11 23 5 12h12l3-12Zm22 0 3 12h12l5-12Z" fill="#A66DE4"/>
+      <path d="M30 27h4M12 23H9M53 23h2"/>
+      <path d="m16 25 3 6h5l2-6Zm22 0 2 6h5l3-6Z" fill="#FFFFFF" stroke="none"/>
+      <path d="M31 45c6 0 10-3 12-7" stroke="#FFFFFF" stroke-width="3.2"/>
+</svg>

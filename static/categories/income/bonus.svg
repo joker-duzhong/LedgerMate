@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 奖金补贴</title>
+  <path d="M18 16H8v12l13 9m25-21h10v12l-13 9" fill="#FF5874"/>
+      <path d="M29 41v9h6v-9" fill="#548FF3"/>
+      <path d="M18 9h28v20a14 14 0 0 1-28 0Z" fill="#FFDF43"/>
+      <path d="m32 17 2.6 5.1 5.6.8-4.1 4 .9 5.6-5-2.7-5 2.7.9-5.6-4.1-4 5.6-.8Z" fill="#FFAA35" stroke-width="2.2"/>
+      <path d="M23 12v17" stroke="#FFFFFF"/>
+      <rect x="19" y="50" width="26" height="7" rx="2.5" fill="#FF5874"/>
+</svg>

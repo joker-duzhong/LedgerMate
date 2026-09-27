@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 保险理赔</title>
+  <path d="M32 7v4"/>
+      <path d="M32 35v16a7 7 0 0 1-14 0v-2"/>
+      <path d="M9 36a23 25 0 0 1 46 0Z" fill="#6ED779"/>
+      <path d="M32 11C22 17 20 26 20 36h24c0-10-2-19-12-25Z" fill="#FFFFFF"/>
+      <path d="M32 11v25"/>
+      <path d="M16 29a22 22 0 0 1 7-11" stroke="#FFFFFF" stroke-width="2.4"/>
+</svg>

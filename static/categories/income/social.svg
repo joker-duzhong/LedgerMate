@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 人情社交</title>
+  <rect x="11" y="8" width="40" height="48" rx="9" fill="#FFFFFF"/>
+      <path d="M22 13h20a5 5 0 0 1 5 5v38H22a6 6 0 0 1-6-6V19a6 6 0 0 1 6-6Z" fill="#FF5874"/>
+      <path d="m26 23 5 7 5-7m-5 7v13m-7-11h14m-14 5h14"/>
+      <circle cx="49" cy="48" r="10" fill="#FFDF43"/>
+      <path d="M49 43v10m-5-5h10"/>
+      <path d="M23 18h16" stroke="#FFFFFF"/>
+</svg>

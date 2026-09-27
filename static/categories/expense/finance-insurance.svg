@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">支出 · 金融保险</title>
+  <path d="m8 30 24-21 11 10v-8h9v16l5 4-5 7-4-3v20H17V35l-4 3Z" fill="#548FF3"/>
+      <path d="m14 29 18-16 7 6M21 36v14" stroke="#FFFFFF" stroke-width="2.5"/>
+      <rect x="25" y="29" width="18" height="20" rx="7" fill="#FFDF43"/>
+      <path d="m30 33 4 5 4-5M29 39h10M30 43h8M34 38v8" stroke-width="2.2"/>
+</svg>

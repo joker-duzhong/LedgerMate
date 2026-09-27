@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none" stroke="#292A2B" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="title">
+  <title id="title">收入 · 生意</title>
+  <rect x="14" y="25" width="36" height="31" rx="2" fill="#FFDF43"/>
+      <path d="m10 24 4-12h36l4 12a7 7 0 0 1-13 3 10 10 0 0 1-18 0 7 7 0 0 1-13-3Z" fill="#FF5874"/>
+      <path d="M18 16h28" stroke="#FFFFFF"/>
+      <path d="M20 34v16h25" stroke="#FFFFFF" stroke-width="3"/>
+      <path d="M43 43H26m0 0 5-5m-5 5 5 5"/>
+</svg>
