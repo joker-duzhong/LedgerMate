@@ -45,3 +45,12 @@ export interface Statistics { start_at: string; end_at: string; start_date?: str
 export interface AiSession { id: string; title: string; created_at: string; updated_at: string }
 export interface AiMessage { id: string; role: 'user' | 'assistant'; content: string; payload?: { client_message_id?: string; status?: 'ready' | 'needs_clarification'; questions?: string[]; [key: string]: unknown } | null; records: RecordItem[]; created_at: string }
 export interface AiChatResponse { session: AiSession; user_message: AiMessage; assistant_message: AiMessage }
+export type AiRequestStatus = 'queued' | 'processing' | 'completed' | 'failed'
+export interface AiRequestResponse {
+  status: AiRequestStatus
+  client_message_id: string
+  session: AiSession
+  user_message: AiMessage
+  assistant_message: AiMessage | null
+  error_message: string | null
+}

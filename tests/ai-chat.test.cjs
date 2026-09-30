@@ -6,12 +6,14 @@ const PENDING_KEY = 'ledger_mate_pending_ai:test-user'
 const session = (id = 'latest-session') => ({ id, title: '日常记账', created_at: '2026-09-26T08:00:00+08:00', updated_at: '2026-09-26T09:00:00+08:00' })
 const record = (id = 'record-1', amount = 2800) => ({ id, record_type: 'expense', amount_cent: amount, category_id: 'food', occurred_date: '2026-09-26', note: '午餐', source: 'ai', created_at: '2026-09-26T09:00:00+08:00' })
 const response = (sessionId, content, clientId, records = [record()], time = '09:00') => ({
+  status: 'completed', client_message_id: clientId, error_message: null,
   session: session(sessionId),
   user_message: { id: `user-${clientId}`, role: 'user', content, payload: { client_message_id: clientId }, records: [], created_at: `2026-09-26T${time}:00+08:00` },
   assistant_message: { id: `assistant-${clientId}`, role: 'assistant', content: records.length ? '已经记下。' : '这笔金额是多少？', payload: { status: records.length ? 'ready' : 'needs_clarification', client_message_id: clientId, questions: records.length ? [] : ['这笔金额是多少？'] }, records, created_at: `2026-09-26T${time}:01+08:00` },
 })
 
 function setup(overrides = {}, options = {}) {
+  let h
   const requests = { sessions: 0, histories: [], created: 0, sent: [], deleted: [], categories: 0 }
   const api = {
     listAiSessions: async () => { requests.sessions += 1; return [session()] },
@@ -19,10 +21,12 @@ function setup(overrides = {}, options = {}) {
     listAiMessages: async (id) => { requests.histories.push(id); return [] },
     createAiSession: async () => { requests.created += 1; return session('created-session') },
     sendAiMessage: async (id, content, clientId) => { requests.sent.push({ id, content, clientId }); return response(id, content, clientId) },
+    listPendingAiRequests: async () => [],
+    getAiRequest: async () => { throw new (h.load('src/utils/request.ts').ApiError)(404, 'not received') },
     deleteRecord: async (id) => { requests.deleted.push(id) },
     ...overrides,
   }
-  const h = createHarness({ ...options, globals: { Error, ...options.globals }, mocks: { '@/api/ledger': api, ...options.mocks } })
+  h = createHarness({ ...options, globals: { Error, ...options.globals }, mocks: { '@/api/ledger': api, ...options.mocks } })
   h.auth.saveSession(authenticated())
   const chat = h.load('src/composables/useAiChat.ts').useAiChat()
   const revision = h.load('src/utils/navigation.ts')
@@ -121,7 +125,7 @@ test('clarification response keeps real questions without changing ledger revisi
   assert.equal(h.chat.pending.value, null)
 })
 
-test('restores pending request in its original session without duplicating an existing user message', async () => {
+test('completed history clears the pending request in its original session without reposting', async () => {
   const pending = { id: 'saved-request', content: '午餐 28', sessionId: 'older-session' }
   const old = response('older-session', pending.content, pending.id)
   const histories = []
@@ -131,13 +135,13 @@ test('restores pending request in its original session without duplicating an ex
   }, { storage: { [PENDING_KEY]: pending } })
   await h.chat.initialize()
   assert.equal(h.chat.sessionId.value, 'older-session')
-  assert.equal(h.chat.pending.value.id, 'saved-request')
+  assert.equal(h.chat.pending.value, null)
+  assert.equal(h.storage.has(PENDING_KEY), false)
   assert.equal(h.chat.visibleMessages.value.length, 2)
   await h.chat.selectSession('latest-session')
-  assert.equal(h.chat.sessionId.value, 'older-session')
-  assert.equal(histories.length, 1)
-  await h.chat.send()
-  assert.equal(h.requests.sent[0].clientId, 'saved-request')
+  assert.equal(h.chat.sessionId.value, 'latest-session')
+  assert.equal(histories.length, 2)
+  assert.equal(h.requests.sent.length, 0)
   assert.equal(h.chat.visibleMessages.value.length, 2)
   assert.equal(h.chat.pending.value, null)
 })
@@ -245,7 +249,7 @@ test('failure to persist a new pending message never submits or clears the input
   assert.match(h.chat.errorMessage.value, /存储/)
 })
 
-test('disposing preserves the pending request while a confirmed save still invalidates the same account ledger', async () => {
+test('disposing leaves the application request alive and completion clears pending and refreshes the ledger', async () => {
   let finish
   const h = setup({ sendAiMessage: (id, content, clientId) => new Promise(resolve => {
     finish = () => resolve(response(id, content, clientId))
@@ -254,12 +258,11 @@ test('disposing preserves the pending request while a confirmed save still inval
   h.chat.input.value = '午餐 28'
   const sending = h.chat.send()
   await flush()
-  const storedId = h.storage.get(PENDING_KEY).id
   h.chat.dispose()
   finish()
   await sending
   assert.equal(h.chat.messages.value.length, 0)
-  assert.equal(h.storage.get(PENDING_KEY).id, storedId)
+  assert.equal(h.storage.has(PENDING_KEY), false)
   assert.equal(h.revision.ledgerRevision(), 1)
 })
 

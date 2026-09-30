@@ -4,7 +4,7 @@ import type { Category, PaymentMethod, RecordItem } from '@/types/api'
 import { markLedgerChanged } from '@/utils/navigation'
 import { ApiError } from '@/utils/request'
 
-const sourceNames: Record<string, string> = { manual: '手动记账', ai: '智能记账', ai_text: '文字记账', ai_voice: '语音记账', ai_image: '图片记账', chat: '对话记账', import: '导入账单' }
+const sourceNames: Record<string, string> = { manual: '手动记账', ai: '快速记账', ai_text: '文字记账', ai_voice: '语音记账', ai_image: '图片记账', chat: '快速记账', import: '导入账单' }
 
 export const useRecordDetail = () => {
   const record = ref<RecordItem | null>(null)

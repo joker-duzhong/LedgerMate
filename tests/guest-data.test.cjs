@@ -145,7 +145,7 @@ for (const variant of variants) {
     page.dispose()
   })
 
-  test(`${variant.name} disposal stops both watchers and prevents further requests`, async () => {
+  test(`${variant.name} disposal stops all watchers and prevents further requests`, async () => {
     const vue = require('vue')
     let stopped = 0
     const { h, page, requests } = setup(variant, {
@@ -153,11 +153,95 @@ for (const variant of variants) {
       vue: { ...vue, watch(...args) { const stop = vue.watch(...args); return () => { stopped++; stop() } } },
     })
     page.dispose()
-    assert.equal(stopped, 2)
+    assert.equal(stopped, 3)
     page.month.value = page.month.value === '2026-01' ? '2026-02' : '2026-01'
     h.auth.clear()
     await flush()
     await page.load()
     assert.equal(requests.length, 0)
+  })
+
+  test(`${variant.name} refreshes visible data after background completion and defers hidden updates until resume`, async () => {
+    let calls = 0
+    const { h, page } = setup(variant, {
+      authenticated: true,
+      listRecords: query => Promise.resolve(response(`result-${++calls}`, query.start_date)),
+    })
+    const { markLedgerChanged } = h.load('src/utils/navigation.ts')
+    await page.resume()
+    assert.equal(variant.records(page)[0].id, 'result-1')
+    markLedgerChanged()
+    markLedgerChanged()
+    await flush()
+    assert.equal(calls, 2)
+    assert.equal(variant.records(page)[0].id, 'result-2')
+
+    page.pause()
+    markLedgerChanged()
+    await flush()
+    assert.equal(calls, 2)
+    await page.resume()
+    assert.equal(calls, 3)
+    assert.equal(variant.records(page)[0].id, 'result-3')
+    page.dispose()
+    markLedgerChanged()
+    await flush()
+    assert.equal(calls, 3)
+  })
+
+  test(`${variant.name} coalesces a queued revision update with the page show request`, async () => {
+    const pending = deferred()
+    let calls = 0
+    const { h, page } = setup(variant, {
+      authenticated: true,
+      listRecords: query => ++calls === 1 ? Promise.resolve(response('before', query.start_date)) : pending.promise,
+    })
+    const { markLedgerChanged } = h.load('src/utils/navigation.ts')
+    await page.resume()
+    page.pause()
+    markLedgerChanged()
+    const showing = page.resume()
+    await flush()
+    assert.equal(calls, 2)
+    pending.resolve(response('completed', `${page.month.value}-01`))
+    await showing
+    assert.equal(variant.records(page)[0].id, 'completed')
+    page.dispose()
+  })
+
+  test(`${variant.name} discards an older refresh when another background record completes`, async () => {
+    const previous = deferred()
+    const latest = deferred()
+    let calls = 0
+    const { h, page } = setup(variant, {
+      authenticated: true,
+      listRecords: query => ++calls === 1 ? Promise.resolve(response('before', query.start_date)) : calls === 2 ? previous.promise : latest.promise,
+    })
+    const { markLedgerChanged } = h.load('src/utils/navigation.ts')
+    await page.resume()
+    markLedgerChanged()
+    await flush()
+    markLedgerChanged()
+    await flush()
+    assert.equal(calls, 3)
+    latest.resolve(response('latest', `${page.month.value}-01`))
+    await flush()
+    previous.resolve(response('outdated', `${page.month.value}-01`))
+    await flush()
+    assert.equal(variant.records(page)[0].id, 'latest')
+    assert.equal(page.loading.value, false)
+    page.dispose()
+  })
+
+  test(`${variant.name} background completion after logout cannot request or restore private data`, async () => {
+    const { h, page, requests } = setup(variant, { authenticated: true })
+    await page.resume()
+    const count = requests.length
+    h.auth.clear()
+    h.load('src/utils/navigation.ts').markLedgerChanged()
+    await flush()
+    assert.equal(requests.length, count)
+    assertEmpty(variant, page)
+    page.dispose()
   })
 }

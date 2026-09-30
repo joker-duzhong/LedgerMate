@@ -11,7 +11,7 @@ import { ensureLogin } from '@/utils/authNavigation'
 import { chatSafeBottom, chatViewportHeight } from '@/utils/chatLayout'
 
 const { navigationStyle } = useNavigationLayout()
-const { sessions, sessionId, visibleMessages, names, categoryById, input, loading, loaded, sending, deletingId, errorMessage, pending, canRetryPending, initialize, selectSession, send, removeRecord, dispose } = useAiChat()
+const { sessions, sessionId, visibleMessages, names, categoryById, input, loading, loaded, sending, processing, deletingId, errorMessage, pending, canRetryPending, initialize, selectSession, send, refreshResult, editFailedMessage, removeRecord, dispose } = useAiChat()
 const historyOpen = ref(false)
 const keyboardHeight = ref(0)
 const baselineHeight = ref(0)
@@ -79,7 +79,7 @@ const stopKeyboard = () => {
   keyboardHeight.value = 0
 }
 watch([visibleMessages, sending], scrollToEnd)
-onShow(() => { if (ensureLogin()) { startKeyboard(); void initialize() } })
+onShow(() => { if (ensureLogin()) { startKeyboard(); void initialize(true) } })
 onHide(stopKeyboard)
 onUnload(() => { stopKeyboard(); dispose() })
 </script>
@@ -107,12 +107,12 @@ onUnload(() => { stopKeyboard(); dispose() })
               <view class="receipt-bottom"><text>{{ recordDate(record) }}</text><view class="receipt-actions"><button :disabled="Boolean(deletingId) || sending" aria-label="删除账单" @tap="remove(record.id)"><AppIcon name="trash" :size="28" color="#292A25" /></button><button :disabled="sending" @tap="editRecord(record.id)"><AppIcon name="edit" :size="26" color="#292A25" />编辑</button></view></view>
             </view>
             <view v-if="message.role === 'assistant' && message.records.length" class="bubble assistant-reply"><text selectable>{{ message.content || '记好啦，每一笔都清清楚楚。' }}</text></view>
-            <text v-if="message.role === 'user' && pending && (message.id === 'pending-' + pending.id || message.payload?.client_message_id === pending.id)" class="message-status">{{ sending ? '正在处理…' : '等待确认 · 可重试' }}</text>
+            <text v-if="message.role === 'user' && pending && (message.id === 'pending-' + pending.id || message.payload?.client_message_id === pending.id)" class="message-status">{{ sending ? '正在发送…' : processing ? '已发送 · 后台处理中' : pending.status === 'failed' ? '处理失败 · 可重试' : '发送待确认 · 可重试' }}</text>
           </view>
           <view v-if="message.role === 'user'" class="user-avatar">我</view>
         </view>
-        <view v-if="sending" class="message-row assistant"><image class="avatar" src="/static/assistant-duck.png" /><view class="bubble typing"><text>正在帮你整理这笔账</text><view class="typing-dots"><view /><view /><view /></view></view></view>
-        <view v-if="errorMessage" class="chat-error"><text>{{ errorMessage }}</text><button v-if="!loaded" @tap="initialize(true)">重新加载对话</button><button v-else-if="pending" :disabled="!canRetryPending" @tap="send">重试同一条消息</button><button v-else @tap="initialize(true)">刷新对话</button></view>
+        <view v-if="processing" class="message-row assistant"><image class="avatar" src="/static/assistant-duck.png" /><view class="bubble typing"><text>正在整理，离开后也会继续处理</text><view class="typing-dots"><view /><view /><view /></view></view></view>
+        <view v-if="errorMessage" class="chat-error"><text>{{ errorMessage }}</text><button v-if="!loaded" @tap="initialize(true)">重新加载对话</button><button v-else-if="processing" @tap="refreshResult">刷新处理结果</button><button v-else-if="pending" :disabled="!canRetryPending" @tap="send">重试同一条消息</button><button v-else @tap="initialize(true)">刷新对话</button><button v-if="loaded && pending?.status === 'failed'" :disabled="sending" @tap="editFailedMessage">修改后重新发送</button></view>
         <view v-if="canRetryPending && !errorMessage" class="chat-error pending-retry"><text>这条消息还在等待确认，继续完成这一笔吧。</text><button @tap="send">重试同一条消息</button></view>
         <view :id="'chat-end-' + anchorVersion" class="chat-end" />
       </view>
@@ -121,7 +121,7 @@ onUnload(() => { stopKeyboard(); dispose() })
     <view class="chat-composer" :style="composerStyle">
       <scroll-view class="shortcuts" scroll-x :show-scrollbar="false"><view class="shortcut-inner"><button @tap="openManual"><AppIcon name="edit" :size="28" />手动记账</button><button @tap="openStats"><AppIcon name="chart" :size="28" />收支统计</button><button @tap="goHome"><AppIcon name="ledger" :size="28" />我的账本</button></view></scroll-view>
       <view class="input-row"><textarea v-model="input" class="chat-input" :auto-height="false" :maxlength="2000" :disabled="sending || Boolean(pending) || !loaded" :adjust-position="false" :show-confirm-bar="false" :cursor-spacing="12" confirm-type="send" placeholder="说说这笔花销，例如：午饭35元" @confirm="send" /><button class="send-button" :disabled="sending || Boolean(pending) || !input.trim() || !loaded" aria-label="发送并记账" @tap="send"><AppIcon name="arrow-up" :size="42" color="#292A25" /></button></view>
-      <text class="composer-note">{{ pending ? '这条消息尚未确认，重试不会重复入账' : 'AI 识别后自动入账，卡片可编辑或删除' }}</text>
+      <text class="composer-note">{{ processing ? '消息已发送，可放心离开，结果会自动保存' : pending ? '这条消息尚未完成，重试不会重复入账' : '整理后自动入账，卡片可编辑或删除' }}</text>
     </view>
     <view v-if="historyOpen" class="history-overlay" @tap="historyOpen = false"><view class="history-sheet" @tap.stop><view class="history-title"><text>对话记录</text><button class="icon-button" @tap="historyOpen = false"><AppIcon name="close" :size="32" color="#292A25" /></button></view><button class="primary-button" @tap="chooseSession(null)"><AppIcon name="plus" :size="28" color="#292A25" />开始新对话</button><scroll-view scroll-y class="session-list"><button v-for="session in sessions" :key="session.id" class="session-row" :class="{ selected: sessionId === session.id }" @tap="chooseSession(session.id)"><text>{{ session.title }}</text><text>{{ session.created_at.slice(0, 10) }}</text></button><text v-if="!sessions.length" class="session-empty">你的对话会保存在这里</text></scroll-view><text class="history-hint">每段对话展示最近 100 条消息</text></view></view>
   </view>

@@ -1,38 +1,16 @@
-import { computed, ref } from 'vue'
-import { listAiSessions, createAiSession, listAiMessages, sendAiMessage, deleteRecord, listCategories } from '@/api/ledger'
-import type { AiChatResponse, AiMessage, AiSession, Category, RecordItem } from '@/types/api'
+import { computed, ref, watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { listAiSessions, listAiMessages, deleteRecord, listCategories } from '@/api/ledger'
+import type { AiRequestResponse, AiMessage, AiSession, Category } from '@/types/api'
 import { useAuthStore } from '@/stores/auth'
-import { ApiError } from '@/utils/request'
+import { useAiRequestStore } from '@/stores/aiRequest'
+import { normalizeSession, normalizeMessages } from '@/utils/aiChat'
 import { ledgerRevision, markLedgerChanged } from '@/utils/navigation'
-
-interface PendingMessage { id: string; content: string; sessionId: string | null }
-
-const isObject = (value: unknown): value is Record<string, unknown> => Boolean(value) && typeof value === 'object' && !Array.isArray(value)
-const normalizeSession = (value: unknown): AiSession => {
-  if (!isObject(value) || typeof value.id !== 'string' || !value.id || typeof value.title !== 'string' || typeof value.created_at !== 'string') throw new Error('对话列表格式异常，请重新加载')
-  return value as unknown as AiSession
-}
-const normalizeMessage = (value: unknown): AiMessage => {
-  if (!isObject(value) || typeof value.id !== 'string' || !value.id || !['user', 'assistant'].includes(String(value.role)) || typeof value.content !== 'string' || typeof value.created_at !== 'string') throw new Error('对话消息格式异常，请重新加载')
-  const records = value.records == null ? [] : value.records
-  if (!Array.isArray(records) || records.some((item) => !isObject(item) || typeof item.id !== 'string' || !item.id || !['income', 'expense'].includes(String(item.record_type)) || !Number.isSafeInteger(item.amount_cent) || Number(item.amount_cent) <= 0 || typeof item.category_id !== 'string')) throw new Error('对话中的账单格式异常，请重新加载')
-  return { ...value, records: records as RecordItem[] } as AiMessage
-}
-const normalizeMessages = (value: unknown): AiMessage[] => {
-  if (!Array.isArray(value)) throw new Error('对话消息列表格式异常，请重新加载')
-  return value.map(normalizeMessage)
-}
-const normalizeResponse = (value: unknown, expectedSession: string): AiChatResponse => {
-  if (!isObject(value)) throw new Error('回复格式异常，请重试确认这条消息')
-  const session = normalizeSession(value.session)
-  const userMessage = normalizeMessage(value.user_message)
-  const assistantMessage = normalizeMessage(value.assistant_message)
-  if (session.id !== expectedSession || userMessage.role !== 'user' || assistantMessage.role !== 'assistant') throw new Error('回复与当前对话不一致，请重试确认这条消息')
-  return { session, user_message: userMessage, assistant_message: assistantMessage }
-}
 
 export const useAiChat = () => {
   const auth = useAuthStore()
+  const requests = useAiRequestStore()
+  const { pending, submitting: sending, processing, lastResponse, errorMessage: requestError } = storeToRefs(requests)
   const sessions = ref<AiSession[]>([])
   const sessionId = ref<string | null>(null)
   const messages = ref<AiMessage[]>([])
@@ -40,12 +18,10 @@ export const useAiChat = () => {
   const input = ref('')
   const loading = ref(false)
   const loaded = ref(false)
-  const sending = ref(false)
   const deletingId = ref('')
-  const errorMessage = ref('')
-  const pending = ref<PendingMessage | null>(null)
-  const canRetryPending = computed(() => loaded.value && Boolean(pending.value) && !sending.value && !loading.value)
-  const storageKey = () => 'ledger_mate_pending_ai:' + (auth.user?.id || '')
+  const pageError = ref('')
+  const errorMessage = computed(() => pageError.value || requestError.value)
+  const canRetryPending = computed(() => loaded.value && Boolean(pending.value) && !processing.value && !sending.value && !loading.value)
   const names = computed(() => new Map(categories.value.map(item => [item.id, item.name])))
   const categoryById = computed(() => new Map(categories.value.map(item => [item.id, item])))
   const optimisticMessage = computed<AiMessage | null>(() => {
@@ -56,47 +32,78 @@ export const useAiChat = () => {
   let operation = 0
   let disposed = false
   let lastRevision = -1
+  let sendingRequestId = ''
+  let responseSequence = 0
+  const receivedResponses = new Map<string, { response: AiRequestResponse; sequence: number }>()
 
-  const remember = () => {
-    try {
-      if (pending.value) uni.setStorageSync(storageKey(), { ...pending.value })
-      else uni.removeStorageSync(storageKey())
-      return true
-    } catch {
-      errorMessage.value = '无法保存待发送记录，请检查设备存储空间后重试'
-      return false
+  const applyResponse = (response: AiRequestResponse) => {
+    if (disposed || (sessionId.value !== response.session.id && response.client_message_id !== sendingRequestId)) return
+    sessionId.value = response.session.id
+    const incoming = [response.user_message, ...(response.assistant_message ? [response.assistant_message] : [])]
+    const replacementIds = new Set(incoming.map(item => item.id))
+    messages.value = [...messages.value.filter(item => !replacementIds.has(item.id)), ...incoming].sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
+    const index = sessions.value.findIndex(item => item.id === response.session.id)
+    if (index >= 0) sessions.value[index] = response.session
+    else sessions.value.unshift(response.session)
+  }
+  const stopResponseWatch = watch(lastResponse, (response) => {
+    if (!response) return
+    receivedResponses.set(response.session.id + ':' + response.client_message_id, { response, sequence: ++responseSequence })
+    applyResponse(response)
+  }, { flush: 'sync' })
+  const mergeResponsesSince = (sequence: number) => {
+    for (const received of receivedResponses.values()) {
+      if (received.sequence > sequence) applyResponse(received.response)
     }
+    receivedResponses.clear()
   }
-  const restore = () => {
-    try {
-      const value = uni.getStorageSync(storageKey()) as PendingMessage | undefined
-      if (value && typeof value.id === 'string' && value.id.length <= 100 && typeof value.content === 'string' && value.content.length <= 2000 && (value.sessionId === null || typeof value.sessionId === 'string')) pending.value = value
-    } catch { errorMessage.value = '无法恢复待确认消息，请先核对账单记录' }
-  }
+  const stopIdentityWatch = watch(() => auth.sessionVersion, () => {
+    operation += 1
+    sessions.value = []
+    sessionId.value = null
+    messages.value = []
+    categories.value = []
+    input.value = ''
+    loaded.value = false
+    loading.value = false
+    pageError.value = ''
+    lastRevision = -1
+    sendingRequestId = ''
+    receivedResponses.clear()
+  }, { flush: 'sync' })
 
   const initialize = async (force = false) => {
     if (disposed || sending.value || loading.value) return
     if (loaded.value && !force && lastRevision === ledgerRevision()) return
     const version = ++operation
-    const requestedRevision = ledgerRevision()
+    let requestedRevision = ledgerRevision()
+    const authVersion = auth.sessionVersion
     loading.value = true
-    errorMessage.value = ''
+    pageError.value = ''
     try {
-      if (!loaded.value) restore()
+      requests.restore()
+      const resumeSession = pending.value ? pending.value.sessionId : undefined
+      if (!loaded.value || force || pending.value) await requests.refresh(!loaded.value || force)
+      if (disposed || version !== operation || authVersion !== auth.sessionVersion) return
+      requestedRevision = ledgerRevision()
       const [sessionList, categoryList] = await Promise.all([listAiSessions(), listCategories()])
       if (disposed || version !== operation) return
       if (!Array.isArray(sessionList) || !Array.isArray(categoryList)) throw new Error('对话信息格式异常，请重新加载')
       sessions.value = sessionList.map(normalizeSession)
       if (categoryList.some((item) => !item || typeof item.id !== 'string' || typeof item.name !== 'string')) throw new Error('分类信息格式异常，请重新加载')
       categories.value = categoryList
-      if (!loaded.value) sessionId.value = pending.value ? pending.value.sessionId : sessionList[0]?.id || null
+      if (!loaded.value) sessionId.value = resumeSession !== undefined ? resumeSession : pending.value?.sessionId || sessionList[0]?.id || null
+      const sequenceBeforeHistory = responseSequence
       const history = sessionId.value ? normalizeMessages(await listAiMessages(sessionId.value)) : []
       if (disposed || version !== operation) return
       messages.value = history
+      const session = sessions.value.find(item => item.id === sessionId.value)
+      if (session) requests.reconcile(session, history)
+      mergeResponsesSince(sequenceBeforeHistory)
       loaded.value = true
       lastRevision = requestedRevision
     } catch (error) {
-      if (!disposed && version === operation) errorMessage.value = error instanceof Error ? error.message : '对话暂时无法加载，请重试'
+      if (!disposed && version === operation) pageError.value = error instanceof Error ? error.message : '对话暂时无法加载，请重试'
     } finally { if (!disposed && version === operation) loading.value = false }
   }
 
@@ -105,67 +112,50 @@ export const useAiChat = () => {
     const previous = sessionId.value
     const version = ++operation
     loading.value = true
-    errorMessage.value = ''
+    pageError.value = ''
     try {
+      const sequenceBeforeHistory = responseSequence
       const history = id ? normalizeMessages(await listAiMessages(id)) : []
       if (disposed || version !== operation) return
       sessionId.value = id
       messages.value = history
+      mergeResponsesSince(sequenceBeforeHistory)
       input.value = ''
     } catch (error) {
-      if (!disposed && version === operation) { sessionId.value = previous; errorMessage.value = error instanceof Error ? error.message : '无法切换对话' }
+      if (!disposed && version === operation) { sessionId.value = previous; pageError.value = error instanceof Error ? error.message : '无法切换对话' }
     } finally { if (!disposed && version === operation) loading.value = false }
   }
 
+  const stopSendingWatch = watch(sending, (value) => {
+    if (!value && !loaded.value && !disposed) void initialize(true)
+  })
+
   const send = async () => {
     if (disposed || sending.value || loading.value || !loaded.value) return
-    const authVersion = auth.sessionVersion
-    const userId = auth.user?.id
-    const sameIdentity = () => auth.sessionVersion === authVersion && auth.user?.id === userId
+    pageError.value = ''
+    const content = pending.value?.content || input.value.trim()
     if (!pending.value) {
-      const content = input.value.trim()
       if (!content) return
-      if (content.length > 2000) { errorMessage.value = '一次最多发送 2000 个字'; return }
-      pending.value = { id: Date.now().toString(36) + '-' + Math.random().toString(36).slice(2), content, sessionId: sessionId.value }
-      if (!remember()) { pending.value = null; return }
+      if (content.length > 2000) { pageError.value = '一次最多发送 2000 个字'; return }
+      if (!requests.begin(content, sessionId.value)) return
       input.value = ''
     }
-    sending.value = true
-    errorMessage.value = ''
-    try {
-      if (!pending.value.sessionId) {
-        const session = normalizeSession(await createAiSession())
-        if (disposed || !sameIdentity()) return
-        sessionId.value = session.id
-        messages.value = []
-        pending.value.sessionId = session.id
-        sessions.value.unshift(session)
-      }
-      if (!remember()) return
-      const request = { ...pending.value }
-      const rawResponse = await sendAiMessage(request.sessionId!, request.content, request.id)
-      if (!sameIdentity()) return
-      const response = normalizeResponse(rawResponse, request.sessionId!)
-      if (response.assistant_message.records.length) markLedgerChanged()
-      if (disposed) return
-      const replacementIds = new Set([response.user_message.id, response.assistant_message.id])
-      messages.value = [...messages.value.filter(item => !replacementIds.has(item.id)), response.user_message, response.assistant_message].sort((a, b) => Date.parse(a.created_at) - Date.parse(b.created_at))
-      const index = sessions.value.findIndex(item => item.id === response.session.id)
-      if (index >= 0) sessions.value[index] = response.session
-      else sessions.value.unshift(response.session)
-      pending.value = null
-      remember()
-      lastRevision = ledgerRevision()
-    } catch (error) {
-      if (disposed || !sameIdentity()) return
-      if (error instanceof ApiError && [400, 422].includes(error.statusCode)) {
-        input.value = pending.value?.content || ''
-        pending.value = null
-        remember()
-      }
-      const detail = error instanceof Error ? error.message : '消息暂未完成'
-      errorMessage.value = pending.value ? detail + '。请重试这条消息，系统会核对同一次请求。' : detail
-    } finally { if (!disposed) sending.value = false }
+    const authVersion = auth.sessionVersion
+    sendingRequestId = pending.value?.id || ''
+    const result = await requests.submit()
+    if (disposed || authVersion !== auth.sessionVersion) return
+    sendingRequestId = ''
+    if (result === 'invalid') input.value = content
+    if (pending.value?.sessionId) sessionId.value = pending.value.sessionId
+    lastRevision = ledgerRevision()
+  }
+  const refreshResult = async () => {
+    await requests.refresh(true)
+    if (!disposed) await initialize(true)
+  }
+  const editFailedMessage = () => {
+    const content = requests.editFailed()
+    if (content !== null) { input.value = content; pageError.value = '' }
   }
 
   const removeRecord = async (id: string) => {
@@ -182,10 +172,10 @@ export const useAiChat = () => {
       lastRevision = ledgerRevision()
       return true
     } catch (error) {
-      if (!disposed) errorMessage.value = error instanceof Error ? error.message : '删除失败，请重试'
+      if (!disposed) pageError.value = error instanceof Error ? error.message : '删除失败，请重试'
       return false
     } finally { if (!disposed) deletingId.value = '' }
   }
-  const dispose = () => { disposed = true; operation += 1 }
-  return { sessions, sessionId, messages, visibleMessages, names, categoryById, input, loading, loaded, sending, deletingId, errorMessage, pending, canRetryPending, initialize, selectSession, send, removeRecord, dispose }
+  const dispose = () => { disposed = true; operation += 1; stopResponseWatch(); stopIdentityWatch(); stopSendingWatch() }
+  return { sessions, sessionId, messages, visibleMessages, names, categoryById, input, loading, loaded, sending, processing, deletingId, errorMessage, pending, canRetryPending, initialize, selectSession, send, refreshResult, editFailedMessage, removeRecord, dispose }
 }

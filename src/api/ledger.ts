@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { AiChatResponse, AiMessage, AiSession, Category, PaymentMethod, RecordItem, RecordPage, RecordPayload, RecordType, Statistics } from '@/types/api'
+import type { AiRequestResponse, AiMessage, AiSession, Category, PaymentMethod, RecordItem, RecordPage, RecordPayload, RecordType, Statistics } from '@/types/api'
 import { normalizeCategories } from '@/utils/categories'
 
 export const listCategories = async () => normalizeCategories(await request<unknown>({ url: '/ledger-mate/categories', method: 'GET' }))
@@ -15,4 +15,6 @@ export const getStatistics = (startDate: string, endDate: string) => request<Sta
 export const listAiSessions = () => request<AiSession[]>({ url: '/ledger-mate/ai/sessions', method: 'GET' })
 export const createAiSession = () => request<AiSession>({ url: '/ledger-mate/ai/sessions', method: 'POST', data: {} })
 export const listAiMessages = (sessionId: string) => request<AiMessage[]>({ url: `/ledger-mate/ai/sessions/${encodeURIComponent(sessionId)}/messages`, method: 'GET', data: { limit: 100 } })
-export const sendAiMessage = (sessionId: string, content: string, clientMessageId: string) => request<AiChatResponse>({ url: `/ledger-mate/ai/sessions/${encodeURIComponent(sessionId)}/messages`, method: 'POST', timeout: 120000, data: { content, client_message_id: clientMessageId } })
+export const sendAiMessage = (sessionId: string, content: string, clientMessageId: string) => request<AiRequestResponse>({ url: `/ledger-mate/ai/sessions/${encodeURIComponent(sessionId)}/requests`, method: 'POST', timeout: 15000, data: { content, client_message_id: clientMessageId } })
+export const getAiRequest = (sessionId: string, clientMessageId: string) => request<AiRequestResponse>({ url: `/ledger-mate/ai/sessions/${encodeURIComponent(sessionId)}/requests/${encodeURIComponent(clientMessageId)}`, method: 'GET', timeout: 15000 })
+export const listPendingAiRequests = () => request<AiRequestResponse[]>({ url: '/ledger-mate/ai/requests/pending', method: 'GET', timeout: 15000 })

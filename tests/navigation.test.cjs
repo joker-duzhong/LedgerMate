@@ -4,6 +4,7 @@ const fs = require('node:fs')
 const path = require('node:path')
 const vm = require('node:vm')
 const ts = require('typescript')
+const vue = require('vue')
 
 const root = path.resolve(__dirname, '..')
 const routes = ['pages/home/index', 'pages/assets/index', 'pages/statistics/index', 'pages/manage/index']
@@ -32,6 +33,7 @@ function navigation(platform, options = {}) {
   const { outputText } = ts.transpileModule(platformSource(read('src/utils/navigation.ts'), platform), { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS } })
   const getCurrentPages = () => [...(options.previous || []), options.noBar ? { route } : options.scope ? { route, $scope: { getTabBar: () => bar } } : { route, getTabBar: () => bar }]
   const require = (specifier) => {
+    if (specifier === 'vue') return vue
     if (specifier === '@/stores/auth') return { useAuthStore: () => ({ isLoggedIn: true }) }
     if (specifier === '@/utils/authNavigation') return { ensureLogin: () => true, PREVIEW_PATHS: routes.map(v => '/' + v) }
     throw new Error('Unexpected import: ' + specifier)

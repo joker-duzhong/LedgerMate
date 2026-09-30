@@ -1,6 +1,11 @@
 <script setup lang="ts">
-import { onLaunch } from '@dcloudio/uni-app'
+import { onHide, onLaunch, onShow } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
+import { useAiRequestStore } from '@/stores/aiRequest'
+
+const aiRequests = useAiRequestStore()
+onShow(() => aiRequests.setForeground(true))
+onHide(() => aiRequests.setForeground(false))
 
 onLaunch(() => {
   const auth = useAuthStore()

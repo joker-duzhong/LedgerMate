@@ -9,7 +9,7 @@ import { useNavigationLayout } from '@/composables/useNavigationLayout'
 const { navigationStyle } = useNavigationLayout()
 const feature = ref('这项功能')
 const descriptions: Record<string, { icon: string; copy: string }> = {
-  'AI记账': { icon: 'leaf', copy: '把今天的收支告诉小账，像聊天一样记录生活。' },
+  'AI记账': { icon: 'leaf', copy: '把今天的收支告诉小账，快速整理这一笔记录。' },
   '账单导入': { icon: 'upload', copy: '把以前的记录也带到这里。账单导入暂未开放，你可以继续记录新的收支。' },
   '数据导出': { icon: 'download', copy: '让每一笔记录都有自己的去处。数据导出暂未开放，你仍可在账单中查看和编辑记录。' },
   '隐私与账户设置': { icon: 'shield', copy: '隐私与账户管理暂未开放。退出登录可在“我的”页面操作。' },
@@ -31,9 +31,9 @@ onLoad((query) => {
     <view class="unavailable-content">
       <view class="status-illustration"><view class="orbit orbit-one" /><view class="orbit orbit-two" /><view class="status-symbol"><AppIcon :name="description.icon" :size="68" /></view></view>
       <text class="status-label">好事，值得慢慢准备</text>
-      <view class="unavailable-title"><text>{{ feature }}</text><text>{{ feature === 'AI记账' ? '和小账聊聊' : '暂未开放' }}</text></view>
+      <view class="unavailable-title"><text>{{ feature === 'AI记账' ? '快速记账' : feature }}</text><text>{{ feature === 'AI记账' ? '和小账聊聊' : '暂未开放' }}</text></view>
       <text class="unavailable-copy">{{ description.copy }}</text>
-      <button v-if="feature === 'AI记账'" class="primary-button status-primary" @tap="goChat">开始 AI 记账</button>
+      <button v-if="feature === 'AI记账'" class="primary-button status-primary" @tap="goChat">开始快速记账</button>
       <button class="ghost-button status-back" @tap="back">返回上一页</button>
     </view>
     <text class="unavailable-footer">一笔一记，陪你过好每一天。</text>

@@ -21,6 +21,7 @@ export const useMonthAnalysis = (includeStatistics = false) => {
   let loadedSessionVersion = -1
   let requestKey = ''
   let disposed = false
+  let visible = false
   const stale = computed(() => Boolean(snapshot.value && (snapshot.value.month !== month.value || errorMessage.value)))
   const reset = () => {
     version += 1
@@ -66,6 +67,9 @@ export const useMonthAnalysis = (includeStatistics = false) => {
     }
   }
   const stopMonthWatch = watch(month, () => { void load() })
-  const dispose = () => { disposed = true; version += 1; stopMonthWatch(); stopSessionWatch() }
-  return { month, snapshot, isGuest, loading, errorMessage, stale, load, dispose }
+  const stopRevisionWatch = watch(ledgerRevision, () => { if (visible) void load() })
+  const resume = () => { visible = true; return load() }
+  const pause = () => { visible = false }
+  const dispose = () => { disposed = true; visible = false; version += 1; stopMonthWatch(); stopSessionWatch(); stopRevisionWatch() }
+  return { month, snapshot, isGuest, loading, errorMessage, stale, load, resume, pause, dispose }
 }

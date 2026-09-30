@@ -7,10 +7,10 @@ import { goChat } from '@/utils/navigation'
 
 <template>
   <!-- #ifdef H5 -->
-  <button class="h5-chat-entry" aria-label="打开 AI 记账" @tap="goChat">
+  <button class="h5-chat-entry" aria-label="打开快速记账" @tap="goChat">
     <image class="entry-duck" src="/static/assistant-duck.png" mode="aspectFill" aria-hidden="true" />
     <AppIcon name="plus" :size="38" color="#292A25" />
-    <text>AI 记账</text>
+    <text>快速记账</text>
   </button>
   <!-- #endif -->
 </template>

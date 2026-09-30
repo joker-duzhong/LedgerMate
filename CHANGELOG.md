@@ -1,18 +1,50 @@
 ﻿# Changelog
 
+## 2026-09-30 后台记账与前台结果恢复
+
+### Changed
+- 发送改用持久异步接收接口：服务器确认后显示“已发送 · 后台处理中”，退出页面或小程序不影响已接收任务。保留请求编号，回包丢失和重试不重复记账。
+- 新增应用级请求状态管理：前台约每 2 秒查询，查询失败退避至 30 秒；进入后台暂停，返回立即补查，冷启动恢复身份后按原编号取回结果。聊天页卸载不停止提交或前台查询。
+- 完成后自动展示回复/账单并刷新当前可见的明细、资产、统计；隐藏页再次显示时刷新。账号切换隔离迟到响应；旧历史不能覆盖新完成结果。
+- 服务端失败可重试同一编号，也可修改后用新编号提交；未确认发送或仍处理中的消息不能直接丢弃。修复发送中退出并立即重进导致聊天页未初始化的问题。
+- 后端复用 Celery/Redis 和消息表，使用独立数据库连接处理，回复和账单原子提交；增加漏投/过期租约恢复、有界重试和跨天日期保护。无需数据库迁移。
+
+### Validation
+- 前端全量 `node --test --experimental-test-isolation=none tests/*.test.cjs`：237 项中 236 项通过；唯一失败为既有 `tests/auth.test.cjs:91`，短信发送仍带空 `test` 字段，已核对 HEAD 原实现，本次未修改认证行为。
+- 后端 `.venv/Scripts/python.exe -X utf8 -B -m pytest -p no:cacheprovider apps/ledger_mate/tests --confcutdir=apps/ledger_mate/tests -q`：71 项通过；使用内存 SQLite、模拟模型及队列，不连接业务数据库或真实模型。
+- `npm run type-check`、`npm run build:mp-weixin`、`npm run build:h5`：通过；沿用已有 Sass 弃用和工具链循环依赖提示。
+- 测试覆盖前台自动显示、退出/重启恢复、回包丢失、原编号重试、任务失败编辑重发、多任务交错、账号隔离、数据库事务、重复领取和过期 Worker 禁止写入；真实微信与 Redis/PostgreSQL 多进程验证尚未执行。
+
+### Files
+- 前端入口与接口：`src/App.vue`、`src/api/ledger.ts`、`src/types/api.ts`。
+- 前端状态与数据：`src/stores/aiRequest.ts`（新增）、`src/utils/aiChat.ts`（新增）、`src/utils/navigation.ts`、`src/composables/useAiChat.ts`、`src/composables/useHomeLedger.ts`、`src/composables/useMonthAnalysis.ts`。
+- 页面：`src/pages/ai-chat/index.vue`、`src/pages/home/index.vue`、`src/pages/assets/index.vue`、`src/pages/statistics/index.vue`。
+- 前端测试：`tests/ai-chat.test.cjs`、`tests/ai-request.test.cjs`（新增）、`tests/guest-data.test.cjs`、`tests/ledger.test.cjs`、`tests/navigation.test.cjs`。
+- 文档：`PRODUCT.md`、`DESIGN.md`、`docs/async-accounting.md`（新增）、`CHANGELOG.md`。
+- `hope-service` 业务：`apps/ledger_mate/ai_requests.py`（新增）、`apps/ledger_mate/services.py`、`apps/ledger_mate/router.py`、`apps/ledger_mate/schemas.py`、`apps/ledger_mate/tasks.py`。
+- `hope-service` 注册与测试：`core/apps_config.py`、`worker/scheduler.py`、`apps/ledger_mate/tests/test_ai_requests.py`（新增）、`apps/ledger_mate/tests/test_http_contract.py`、`apps/ledger_mate/tests/test_tasks.py`（新增）。
+- `hope-service` 文档：`apps/ledger_mate/CHANGELOG.md`、根 `CHANGELOG.md`。
+
+### Deployment
+- 尚未部署。需先更新后端 API、Worker、Beat，再发布小程序；命令和验收步骤见 [后台记账说明](docs/async-accounting.md)。
+
 ## [Unreleased] - 2026-09-28
 
 ### Changed
+- 将首页、我的页、底栏、H5 入口、快速记账页和账单详情中的 AI 宣传式文案改为中性功能描述，例如“快速记账”“整理后生成账单卡片”。保留现有功能行为和接口不变。
 - 小程序分类读取兼容全局模板同步后的 `sort_order`、启用状态和图标字段别名。
 - 新增统一 `CategoryIcon`，优先展示后台上传的 CDN/静态路径图标，加载失败或旧图标名称自动回退到本地 `AppIcon`。
 - 首页、记账编辑、账单详情、分类设置、收支统计和 AI 记账卡片统一使用分类图标组件。
 - 恢复冷启动静默微信登录：完整登录态自动进入首页，手机号未绑定、未同意协议或静默失败时进入访客预览；账单、统计、记账设置及 AI 等实际操作按需进入手动登录页。
-- 功能触发的登录页使用手动模式，不再重复静默请求；保留左上角返回按钮、手机号绑定流程和登录失败重试，直接进入受保护页面时安全回到首页。
+- 将冷启动 Loading 页与手动登录页拆分：启动页只负责静默登录和进入访客首页，不显示返回按钮；登录页保留返回预览、手机号绑定和失败重试。
+- 手动登录按钮显式调用登录函数，避免把微信 `tap` 事件对象误判为静默登录参数，收到 `PHONE_REQUIRED` 后稳定停留在手机号绑定步骤。
 - 访客页面不请求或保留个人账单数据，使用占位内容展示基础功能；登录、退出和账号切换会清理异步请求与缓存，避免跨账号数据串联。
 
+### Fixed
+- 移除短信发送请求中无业务含义的空 `test` 字段，保持认证接口请求体与服务端契约一致。
+
 ### Validation
-- 全量 `node --test --experimental-test-isolation=none tests/*.test.cjs`：通过（208 项）。
-- `npm run type-check`：通过。
+- 全量 `node --test --experimental-test-isolation=none tests/*.test.cjs`：通过（211 项），新增启动页分支和真实点击事件回归测试。
 - `npm run type-check`、`npm run build:mp-weixin`、`npm run build:h5`：通过。
 
 ## [0.4.6] - 2026-09-27

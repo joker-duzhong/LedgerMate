@@ -81,7 +81,7 @@ test('home refresh ignores old responses and preserves active loading state', as
   const home = harness.load('src/composables/useHomeLedger.ts').useHomeLedger()
   home.month.value = '2026-09'
   const first = home.load()
-  const second = home.load()
+  const second = home.load(true)
   older.reject(new Error('old request failure'))
   await first
   assert.equal(home.loading.value, true)

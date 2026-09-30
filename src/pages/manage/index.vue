@@ -26,7 +26,7 @@ onShow(() => syncNativeTab(3))
   <view class="profile-page" :style="navigationStyle">
     <view class="profile-header"><view class="capsule-safe"><text class="profile-title">我的</text></view><view class="identity"><view class="avatar-wrap"><image src="/static/assistant-duck.png" mode="aspectFit" class="profile-avatar" /></view><view class="identity-copy"><text class="nickname">{{ nickname }}</text><text class="account-label">{{ accountLabel }}</text><button v-if="!auth.isLoggedIn" class="login-button" @tap="openLogin">点击登录<AppIcon name="chevron-right" :size="24" color="#5B4A16" /></button></view></view></view>
     <view class="profile-body">
-      <view class="card quick-card"><button @tap="goChat"><view class="quick-icon"><AppIcon name="leaf" :size="42" color="#292A25" /></view><text>AI 记账</text><text class="quick-copy">说一句，记一笔</text></button><view class="quick-divider" /><button @tap="openStatistics"><view class="quick-icon"><AppIcon name="chart" :size="42" color="#292A25" /></view><text>收支统计</text><text class="quick-copy">看看钱的去向</text></button></view>
+      <view class="card quick-card"><button @tap="goChat"><view class="quick-icon"><AppIcon name="leaf" :size="42" color="#292A25" /></view><text>快速记账</text><text class="quick-copy">说一句，记一笔</text></button><view class="quick-divider" /><button @tap="openStatistics"><view class="quick-icon"><AppIcon name="chart" :size="42" color="#292A25" /></view><text>收支统计</text><text class="quick-copy">看看钱的去向</text></button></view>
 
       <text class="section-label">记账设置</text>
       <view class="card menu-card">

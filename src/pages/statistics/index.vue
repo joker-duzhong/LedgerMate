@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
+import { onHide, onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
 import AppIcon from '@/components/AppIcon.vue'
 import CategoryIcon from '@/components/CategoryIcon.vue'
 import H5ChatEntry from '@/components/H5ChatEntry.vue'
@@ -14,7 +14,7 @@ import { ensureLogin, openLogin } from '@/utils/authNavigation'
 import { analysisDate, averageDayCount, categoryRanking, dailyAverage, detailRanking, recordSummary, recordTrend } from '@/utils/statistics'
 import type { RecordType } from '@/types/api'
 
-const { month, snapshot, loading, errorMessage, stale, isGuest, load, dispose } = useMonthAnalysis(true)
+const { month, snapshot, loading, errorMessage, stale, isGuest, load, resume, pause, dispose } = useMonthAnalysis(true)
 const { navigationStyle } = useNavigationLayout()
 const trendType = ref<'expense' | 'income' | 'balance'>('expense')
 const chartKind = ref<'bar' | 'line'>('bar')
@@ -46,7 +46,8 @@ const share = (percentage: number) => percentage > 0 && percentage < .1 ? '<0.1%
 const money = (value: number) => isGuest.value ? '—' : formatMoney(value)
 const openRecord = (id: string) => { if (ensureLogin()) uni.navigateTo({ url: `/pages/record-detail/index?id=${encodeURIComponent(id)}` }) }
 watch([month, categoryType], () => { showAllDetails.value = false; selectedDay.value = 0 })
-onShow(() => { syncNativeTab(2); void load() })
+onShow(() => { syncNativeTab(2); void resume() })
+onHide(pause)
 onPullDownRefresh(() => { void load(true) })
 onUnload(dispose)
 </script>

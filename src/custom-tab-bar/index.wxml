@@ -1,7 +1,7 @@
 <view wx:if="{{!hidden}}" class="tab-bar">
   <view class="tab-inner">
     <block wx:for="{{tabs}}" wx:key="pagePath">
-      <button wx:if="{{index === 2}}" class="tab-item tab-center" bindtap="openChat" aria-label="AI 记一笔">
+      <button wx:if="{{index === 2}}" class="tab-item tab-center" bindtap="openChat" aria-label="快速记一笔">
           <image class="duck-peek" src="/static/assistant-duck.png" mode="aspectFill" />
           <view class="add-pill"><image src="/static/icons/ink/plus.svg" /></view>
       </button>

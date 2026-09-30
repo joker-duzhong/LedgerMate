@@ -24,7 +24,7 @@ const typeTabs = [
   { key: 'income', label: '收入' },
   { key: 'transfer', label: '转账' },
   { key: 'loan', label: '借款' },
-  { key: 'ai', label: 'AI记' },
+  { key: 'ai', label: '快记' },
 ] as const
 const keypad = ['1', '2', '3', 'backspace', '4', '5', '6', '+', '7', '8', '9', '-', 'again', '0', '.', 'done'] as const
 const formattedDate = computed(() => draft.occurredDate.replace(/-/g, '.'))

@@ -1,10 +1,11 @@
+import { ref } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { ensureLogin, PREVIEW_PATHS } from '@/utils/authNavigation'
 
-let revision = 0
+const revision = ref(0)
 let overlayHidden = false
-export const ledgerRevision = () => revision
-export const markLedgerChanged = () => { revision += 1 }
+export const ledgerRevision = () => revision.value
+export const markLedgerChanged = () => { revision.value += 1 }
 export const TAB_PATHS = PREVIEW_PATHS
 export const CHAT_PATH = '/pages/ai-chat/index'
 export const goHome = () => uni.switchTab({ url: TAB_PATHS[0] })

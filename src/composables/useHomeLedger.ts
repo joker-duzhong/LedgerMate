@@ -22,8 +22,10 @@ export const useHomeLedger = () => {
   const totalCount = ref(0)
   let operation = 0
   let disposed = false
+  let visible = false
   let lastRevision = -1
   let loadedSessionVersion = -1
+  let requestKey = ''
   const monthRecords = computed(() => filterRecords(records.value, categories.value, { month: month.value, type: 'all', keyword: '' }))
   const visibleRecords = computed(() => filterRecords(monthRecords.value, categories.value, { month: month.value, type: type.value, keyword: keyword.value }).filter(item => !selectedDate.value || recordDate(item) === selectedDate.value))
   const groups = computed(() => groupRecordsByDay(visibleRecords.value))
@@ -46,16 +48,19 @@ export const useHomeLedger = () => {
     totalCount.value = 0
     lastRevision = -1
     loadedSessionVersion = -1
+    requestKey = ''
   }
   const stopSessionWatch = watch(() => auth.sessionVersion, reset, { flush: 'sync' })
   const load = async (force = false) => {
     if (disposed) return
     if (isGuest.value) { reset(); uni.stopPullDownRefresh?.(); return }
     const requestedSessionVersion = auth.sessionVersion
-    if (!force && loaded.value && loadedMonth.value === month.value && lastRevision === ledgerRevision() && loadedSessionVersion === requestedSessionVersion) return
-    const current = ++operation
     const requestedRevision = ledgerRevision()
     const requestedMonth = month.value
+    const key = `${requestedSessionVersion}:${requestedMonth}:${requestedRevision}`
+    if (!force && (loading.value && requestKey === key || loaded.value && loadedMonth.value === requestedMonth && lastRevision === requestedRevision && loadedSessionVersion === requestedSessionVersion)) return
+    const current = ++operation
+    requestKey = key
     loading.value = true
     errorMessage.value = ''
     loadedCount.value = 0
@@ -85,6 +90,9 @@ export const useHomeLedger = () => {
     if (selectedDate.value && !selectedDate.value.startsWith(month.value)) selectedDate.value = ''
     void load()
   })
-  const dispose = () => { disposed = true; operation += 1; stopMonthWatch(); stopSessionWatch() }
-  return { month, selectedDate, type, keyword, isGuest, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, filteredTotals, categoryNames, categoryById, load, dispose }
+  const stopRevisionWatch = watch(ledgerRevision, () => { if (visible) void load() })
+  const resume = () => { visible = true; return load() }
+  const pause = () => { visible = false }
+  const dispose = () => { disposed = true; visible = false; operation += 1; stopMonthWatch(); stopSessionWatch(); stopRevisionWatch() }
+  return { month, selectedDate, type, keyword, isGuest, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, filteredTotals, categoryNames, categoryById, load, resume, pause, dispose }
 }

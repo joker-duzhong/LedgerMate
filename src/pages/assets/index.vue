@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
-import { onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
+import { onHide, onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
 import AppIcon from '@/components/AppIcon.vue'
 import H5ChatEntry from '@/components/H5ChatEntry.vue'
 import MonthPicker from '@/components/MonthPicker.vue'
@@ -12,7 +12,7 @@ import { ensureLogin } from '@/utils/authNavigation'
 import { byCreatedDescending } from '@/utils/ledger'
 import { analysisDate, paymentFlows, recordSummary } from '@/utils/statistics'
 
-const { month, snapshot, loading, errorMessage, isGuest, load, dispose } = useMonthAnalysis()
+const { month, snapshot, loading, errorMessage, isGuest, load, resume, pause, dispose } = useMonthAnalysis()
 const { navigationStyle } = useNavigationLayout()
 const selectedPayment = ref('')
 const flows = computed(() => paymentFlows(snapshot.value?.records || [], snapshot.value?.payments || []))
@@ -24,7 +24,8 @@ const money = (value: number) => isGuest.value ? '—' : formatMoney(value)
 const openRecord = (id: string) => { if (ensureLogin()) uni.navigateTo({ url: `/pages/record-detail/index?id=${encodeURIComponent(id)}` }) }
 const addRecord = goChat
 watch(month, () => { selectedPayment.value = '' })
-onShow(() => { syncNativeTab(1); void load() })
+onShow(() => { syncNativeTab(1); void resume() })
+onHide(pause)
 onPullDownRefresh(() => { void load(true) })
 onUnload(dispose)
 </script>

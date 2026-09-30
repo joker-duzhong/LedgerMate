@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
-import { onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
+import { onHide, onPullDownRefresh, onShow, onUnload } from '@dcloudio/uni-app'
 import AppIcon from '@/components/AppIcon.vue'
 import CategoryIcon from '@/components/CategoryIcon.vue'
 import H5ChatEntry from '@/components/H5ChatEntry.vue'
@@ -13,7 +13,7 @@ import { currentMonth, dayTitle, weekday } from '@/utils/ledger'
 import { goChat, syncNativeTab } from '@/utils/navigation'
 import { ensureLogin } from '@/utils/authNavigation'
 
-const { month, selectedDate, type, keyword, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, categoryNames, categoryById, isGuest, load, dispose } = useHomeLedger()
+const { month, selectedDate, type, keyword, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, categoryNames, categoryById, isGuest, load, resume, pause, dispose } = useHomeLedger()
 const { navigationStyle } = useNavigationLayout()
 const searchOpen = ref(false)
 const calendarOpen = ref(false)
@@ -30,7 +30,8 @@ const selectDate = (value: string) => { if (!ensureLogin()) return; month.value 
 const manage = (section: string) => { if (ensureLogin()) uni.navigateTo({ url: '/pages/category-settings/index?section=' + section }) }
 const openStats = () => { if (ensureLogin()) uni.switchTab({ url: '/pages/statistics/index' }) }
 const bookMenu = () => { if (ensureLogin()) uni.showActionSheet({ itemList: ['我的账本 · 当前账本', '账本设置'], success: ({ tapIndex }) => { if (tapIndex === 1) uni.switchTab({ url: '/pages/manage/index' }) } }) }
-onShow(() => { syncNativeTab(0); void load() })
+onShow(() => { syncNativeTab(0); void resume() })
+onHide(pause)
 onPullDownRefresh(() => load(true))
 onUnload(dispose)
 </script>
@@ -53,12 +54,12 @@ onUnload(dispose)
       <view class="period-strip"><text>{{ monthPeriod }}</text><button v-if="month !== currentMonth()" @tap="ensureLogin() && (month = currentMonth())">回到本月</button><text v-else>{{ isGuest ? '登录后查看收支' : '收支一目了然' }}</text></view>
       <view class="overview-main">
         <view class="expense-overview"><text class="expense-label">支出</text><text class="hero-amount money">{{ money(totals.expense) }}</text></view>
-        <button class="assistant-entry" @tap="goChat"><text>来和我 AI 记账吧～</text><image src="/static/assistant-duck.png" mode="aspectFill" /></button>
+        <button class="assistant-entry" @tap="goChat"><text>说一说，快速记一笔吧～</text><image src="/static/assistant-duck.png" mode="aspectFill" /></button>
         <view class="minor-totals"><view><text>收入</text><text class="minor-value money">{{ money(totals.income) }}</text></view><view><text>结余</text><text class="minor-value money">{{ money(totals.balance) }}</text></view></view>
       </view>
       <!-- <button class="chat-invitation" @tap="goChat"><text>说一句话，把账记好</text><AppIcon name="chevron-right" :size="28" color="#292A25" /></button> -->
       <view class="quick-actions">
-        <button @tap="goChat"><image src="/static/assistant-duck.png" /><text>对话记账</text></button>
+        <button @tap="goChat"><image src="/static/assistant-duck.png" /><text>快速记账</text></button>
         <button @tap="openStats"><AppIcon name="chart" :size="44" /><text>收支统计</text></button>
         <button @tap="manage('payments')"><AppIcon name="wallet" :size="44" /><text>支付方式</text></button>
         <button @tap="manage('categories')"><AppIcon name="ledger" :size="44" /><text>分类管理</text></button>
@@ -73,7 +74,7 @@ onUnload(dispose)
     <button v-if="selectedDate" class="date-filter" @tap="ensureLogin() && (selectedDate = '')">{{ selectedDate }} · 查看整月<AppIcon name="close" :size="24" /></button>
     <view v-if="loading" class="load-line">{{ hasCurrentData ? '正在更新账单…' : totalCount ? '正在整理 ' + loadedCount + ' / ' + totalCount + ' 笔记录' : '正在打开你的账本…' }}</view>
     <view v-if="errorMessage" class="form-error"><text>{{ errorMessage }}</text><button @tap="ensureLogin() && load(true)">重试</button></view>
-    <view v-if="!loading && !errorMessage && !visibleRecords.length" class="card state-card"><image class="empty-duck" src="/static/assistant-duck.png" /><text class="state-title">{{ isGuest ? '登录后查看你的账单' : filtered ? '这里还没有匹配的账单' : '从第一笔小日常开始' }}</text><text class="state-copy">{{ isGuest ? '先看看记账、收支统计和分类管理，登录后开始记录。' : filtered ? '试试其他日期或关键词。' : '告诉我「午饭35元」，我来帮你整理。' }}</text><button class="primary-button" @tap="filtered ? resetFilter() : goChat()">{{ isGuest ? '登录并开始记账' : filtered ? '清除筛选' : '和我聊一笔' }}</button></view>
+    <view v-if="!loading && !errorMessage && !visibleRecords.length" class="card state-card"><image class="empty-duck" src="/static/assistant-duck.png" /><text class="state-title">{{ isGuest ? '登录后查看你的账单' : filtered ? '这里还没有匹配的账单' : '从第一笔小日常开始' }}</text><text class="state-copy">{{ isGuest ? '先看看记账、收支统计和分类管理，登录后开始记录。' : filtered ? '试试其他日期或关键词。' : '说说「午饭35元」，帮你整理这一笔。' }}</text><button class="primary-button" @tap="filtered ? resetFilter() : goChat()">{{ isGuest ? '登录并开始记账' : filtered ? '清除筛选' : '快速记一笔' }}</button></view>
     <view v-if="hasCurrentData && visibleRecords.length" class="records-card card">
       <view v-for="group in groups" :key="group.records[0]?.id" class="day-group">
         <view class="day-heading"><view><text>{{ dayTitle(group.date) }}</text><text class="weekday">{{ weekday(group.date) }}</text></view><view class="day-totals"><text class="income-total">收 {{ formatMoney(group.income) }}</text><text>支 {{ formatMoney(group.expense) }}</text></view></view>
