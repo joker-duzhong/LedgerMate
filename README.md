@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.png" width="160" alt="账伴 LedgerMate Logo" />
+  <img src="static/logo.png" width="160" alt="账伴 LedgerMate Logo" />
 </p>
 
 <h1 align="center">账伴 · LedgerMate</h1>
