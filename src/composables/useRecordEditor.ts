@@ -1,7 +1,7 @@
 import { computed, reactive, ref } from 'vue'
 import { createRecord, deleteRecord, getRecord, listCategories, listPaymentMethods, updateRecord } from '@/api/ledger'
 import type { Category, PaymentMethod, RecordPayload, RecordType } from '@/types/api'
-import { todayDate } from '@/utils/calendar'
+import { parseCalendarDate, todayDate } from '@/utils/calendar'
 import { markLedgerChanged } from '@/utils/navigation'
 import { ApiError } from '@/utils/request'
 import { draftFingerprint, draftToPayload, localRecordFields, type RecordDraft } from '@/utils/recordEditor'
@@ -60,7 +60,7 @@ export const useRecordEditor = () => {
     }
   }
 
-  const load = async (id = recordId.value) => {
+  const load = async (id = recordId.value, initialDate = '') => {
     if (disposed || loadingOptions || busy.value) return
     recordId.value = id
     loading.value = true
@@ -82,6 +82,7 @@ export const useRecordEditor = () => {
         })
         originalPaymentId.value = record.payment_method_id || ''
       } else {
+        if (parseCalendarDate(initialDate)) draft.occurredDate = initialDate
         draft.paymentMethodId = paymentMethods.value.find((item) => item.is_default)?.id || ''
         syncCategory()
       }

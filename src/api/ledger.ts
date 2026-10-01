@@ -1,5 +1,5 @@
 import { request } from '@/utils/request'
-import type { AiRequestResponse, AiMessage, AiSession, Category, PaymentMethod, RecordItem, RecordPage, RecordPayload, RecordType, Statistics } from '@/types/api'
+import type { AiRequestResponse, AiMessage, AiSession, Category, ExportResult, ImportPreview, ImportResult, PaymentMethod, RecordItem, RecordPage, RecordPayload, RecordType, Statistics } from '@/types/api'
 import { normalizeCategories } from '@/utils/categories'
 
 export const listCategories = async () => normalizeCategories(await request<unknown>({ url: '/ledger-mate/categories', method: 'GET' }))
@@ -11,6 +11,9 @@ export const getRecord = (recordId: string) => request<RecordItem>({ url: `/ledg
 export const createRecord = (data: RecordPayload) => request<RecordItem>({ url: '/ledger-mate/records', method: 'POST', data })
 export const updateRecord = (recordId: string, data: Partial<RecordPayload>) => request<RecordItem>({ url: `/ledger-mate/records/${recordId}`, method: 'PUT', data })
 export const deleteRecord = (recordId: string) => request<void>({ url: `/ledger-mate/records/${recordId}`, method: 'DELETE' })
+export const previewImport = (data: { file_name: string; content: string }) => request<ImportPreview>({ url: '/ledger-mate/import/preview', method: 'POST', data })
+export const confirmImport = (batchId: string, data: { skip_duplicates: boolean }) => request<ImportResult>({ url: `/ledger-mate/import/${encodeURIComponent(batchId)}/confirm`, method: 'POST', data })
+export const exportRecords = (params: { format: 'csv' | 'json'; start_date?: string; end_date?: string; record_type?: RecordType }) => request<ExportResult>({ url: '/ledger-mate/export', method: 'GET', data: params })
 export const getStatistics = (startDate: string, endDate: string) => request<Statistics>({ url: '/ledger-mate/statistics', method: 'GET', data: { start_date: startDate, end_date: endDate } })
 export const listAiSessions = () => request<AiSession[]>({ url: '/ledger-mate/ai/sessions', method: 'GET' })
 export const createAiSession = () => request<AiSession>({ url: '/ledger-mate/ai/sessions', method: 'POST', data: {} })

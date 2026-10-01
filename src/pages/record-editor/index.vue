@@ -9,6 +9,7 @@ import { useNavigationLayout } from '@/composables/useNavigationLayout'
 import { applyAmountKey } from '@/utils/keypad'
 import { goHome } from '@/utils/navigation'
 import { ensureLogin } from '@/utils/authNavigation'
+import { parseCalendarDate } from '@/utils/calendar'
 
 const editor = useRecordEditor()
 const { navigationStyle } = useNavigationLayout()
@@ -98,7 +99,11 @@ watch(dirty, (value) => {
   else if (typeof uni.disableAlertBeforeUnload === 'function') uni.disableAlertBeforeUnload({})
 })
 // #endif
-onLoad((query) => { if (ensureLogin()) void load(typeof query?.id === 'string' ? query.id : '') })
+onLoad((query) => {
+  if (!ensureLogin()) return
+  const date = typeof query?.date === 'string' && parseCalendarDate(query.date) ? query.date : ''
+  void load(typeof query?.id === 'string' ? query.id : '', date)
+})
 onShow(() => {
   if (!ensureLogin()) return
   if (refreshOnReturn) { refreshOnReturn = false; void editor.refreshOptions() }

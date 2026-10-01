@@ -11,15 +11,11 @@ export const miniappLogin = (code: string, appid: string) =>
     { auth: false },
   );
 
-export const sendSmsCode = (phone: string) =>
-  request<null>(
-    {
-      url: "/auth/sms/send",
-      method: "POST",
-      data: { phone, test: import.meta.env.VITE_LOCAL_ENV === "true" ? "hope" : "" },
-    },
-    { auth: false },
-  );
+export const sendSmsCode = (phone: string) => {
+  const data: { phone: string; test?: string } = { phone };
+  if (import.meta.env.VITE_LOCAL_ENV === "true") data.test = "hope";
+  return request<null>({ url: "/auth/sms/send", method: "POST", data }, { auth: false });
+};
 
 export const completeSmsLogin = (data: CompleteSmsIdentityRequest) =>
   request<AuthenticatedIdentity>(

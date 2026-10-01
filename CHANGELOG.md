@@ -1,5 +1,33 @@
 ﻿# Changelog
+## 2026-10-01 修复微信文件导出
 
+- 修复手机微信误调用仅支持 PC 的 `saveFileToDisk` 导致导出失败：手机写入 CSV/JSON 后打开文件分享面板，Windows/macOS 微信继续使用磁盘保存。
+- 移除不支持 CSV/JSON 的文档预览兜底；明确提示不支持的平台、文件写入失败和分享/保存失败，取消操作不再显示错误。
+- 等待微信回调完成后再显示成功，避免“已准备账单”与保存失败同时出现；导出过程中阻止重复提交，失败或取消后可重试。
+- 验证：`node --test --experimental-test-isolation=none tests/export-file.test.cjs` 7 项通过；`npm run type-check`、`npm run build:mp-weixin` 通过。构建在允许创建子进程后完成，保留既有 Sass 弃用与循环依赖提示；尚未在微信真机完成文件分享验证。
+- 修改文件：`src/pages/data-management/index.vue`、`src/utils/exportFile.ts`、`tests/export-file.test.cjs`、`CHANGELOG.md`。
+
+## 2026-10-01 日历视图与账单数据管理
+
+- 修复日历页月份解析：选择 9 月时不再用当前 10 月生成网格，月末日期和点击日期会保持在正确月份。
+- 首页右上角日历按钮改为进入独立日历视图；首页只保留月份筛选，日历页按月显示六周网格、每日收支色阶、月收入/支出/结余和选中日期明细。
+- 新增 CSV/JSON 导入预览与确认流程：兼容参考账单字段，校验日期、收支类型、金额、分类和支付方式，报告错误行并支持跳过重复账单；未知分类和支付方式按名称创建，账本与二级分类保留在备注扩展中。
+- 新增按全部/指定月份、收支类型导出 CSV/JSON，CSV 使用 UTF-8 BOM 和十进制金额字符串；H5 提供浏览器下载，微信小程序写入用户文件目录后打开保存。
+- 新增日历聚合、数据管理页面、记录编辑器日期预填及前后端导入导出接口测试；复用已有导入批次表，无需数据库迁移。
+- 修复短信发送在非本地环境携带空 `test` 字段的问题，保持测试与真实接口请求体一致。
+
+### Validation
+
+- 前端 `npm run type-check` 通过；全量 `node --test --experimental-test-isolation=none tests/*.test.cjs`：240 项通过。
+- 后端 `E:\code\hope\hope-service\.venv\Scripts\python.exe -B -m pytest -p no:cacheprovider apps/ledger_mate/tests -q`：77 项通过，2 个既有弃用警告。
+- `npm run build:h5` 与 `npm run build:mp-weixin` 在当前环境因工具链 `spawn EPERM` 未完成，未发现代码编译错误；需在可运行 uni CLI 的环境复核构建。
+
+### Files
+
+- 前端页面与路由：`src/pages/home/index.vue`、`src/pages/calendar/index.vue`、`src/pages/data-management/index.vue`、`src/pages/manage/index.vue`、`src/pages/record-editor/index.vue`、`src/pages.json`。
+- 前端接口与类型：`src/api/auth.ts`、`src/api/ledger.ts`、`src/types/api.ts`、`src/utils/dailyCalendar.ts`、`src/composables/useRecordEditor.ts`。
+- 前端测试：`tests/daily-calendar.test.cjs`。
+- 后端接口与业务：`E:\code\hope\hope-service\apps/ledger_mate/router.py`、`schemas.py`、`services.py`、`tests/test_import_export.py`、`CHANGELOG.md`。
 ## 2026-09-30 README 品牌展示
 
 - 在 README 顶部加入现有 `logo.png`、居中标题、品牌短句、技术栈标签和文档导航，图片使用仓库相对路径。
@@ -280,12 +308,4 @@
 
 ### Changed
 - 移除未使用且与 uni-app Vite 版本冲突的 `vue-router`，将类型工具链固定为 TypeScript `5.9.3`。
-
-
-
-
-
-
-
-
 

@@ -1,6 +1,6 @@
 # 账伴 UI 规范
 
-更新日期：2026-09-27。本文件按最终源码记录黄色鸭子记账界面；产品能力和未开放范围见 [PRODUCT.md](PRODUCT.md)。品牌风格采用用户最新参考，不继续沿用上一轮焦糖棕主色方向。
+更新日期：2026-10-01。本文件按最终源码记录黄色鸭子记账界面；产品能力和未开放范围见 [PRODUCT.md](PRODUCT.md)。品牌风格采用用户最新参考，不继续沿用上一轮焦糖棕主色方向。
 
 ## 颜色、字体与素材
 
@@ -41,7 +41,7 @@ H5 保留框架原生 4 tab，在底栏上方居中展示 [H5ChatEntry.vue](src/
 
 全部页面通过 [useNavigationLayout.ts](src/composables/useNavigationLayout.ts) 将实测导航尺寸绑定到页面根节点，不使用编译器固定为 25px 的 `--status-bar-height`。状态栏取可信的 `statusBarHeight` 与 `safeArea.top` 较大值，微信导航行按 `胶囊高度 + 2 × (胶囊顶部 − 状态栏高度)` 计算且至少 44px；右侧按 `窗口宽度 − 胶囊左边界 + 8px` 留白。标题行使用 `.capsule-safe`，外层仅预留状态栏，月份等内容置于标题行之后。H5 不预留微信胶囊；接口失败保留回退布局。页面重新显示和窗口变化会重新测量，隐藏/卸载时移除监听。计算规则见 [navigationLayout.ts](src/utils/navigationLayout.ts)。
 
-所有日期和月份选择统一使用 [CalendarSheet.vue](src/components/CalendarSheet.vue)，包括首页按日筛选、[MonthPicker.vue](src/components/MonthPicker.vue) 和记账表单。日历采用底部弹层，可逐日点选、切换月份/年份、回到今天并确认，支持日期与月份两种模式；没有日期滚轮或时分选择。支付方式仍可使用原生列表 `picker`。
+月份选择继续使用 [MonthPicker.vue](src/components/MonthPicker.vue)，记账表单日期使用 [CalendarSheet.vue](src/components/CalendarSheet.vue)。首页只保留月份筛选；右上角日历进入 [calendar/index.vue](src/pages/calendar/index.vue)，以固定六周网格呈现每日收入/支出色阶、月份汇总和选中日期明细。没有日期滚轮或时分选择。支付方式仍可使用原生列表 `picker`。
 
 记账日期只提交 `occurred_date: YYYY-MM-DD`；`occurred_at` 仅供旧数据兼容，不进入新表单。服务端筛选按 `start_date` 包含、`end_date` 不包含。**主账单流与支付方式展开明细按 `created_at` 倒序**，而非按消费日期排序；主账单流中相邻相同记账日期形成一组，因此补记旧账会出现在新创建的位置。工具见 [ledger.ts](src/utils/ledger.ts)。统计金额榜按金额排序。
 
@@ -49,7 +49,7 @@ H5 保留框架原生 4 tab，在底栏上方居中展示 [H5ChatEntry.vue](src/
 
 ## 页面与真实操作
 
-**明细**：[home/index.vue](src/pages/home/index.vue) 使用黄色页头、月份/日历/搜索工具、白色月汇总卡和鸭子 AI 邀请入口。快捷区连接对话、统计、支付方式和分类管理。下方支持全部/支出/收入、日期与关键词组合筛选，显示分组收支小计和金额正负号。点击账单进入独立详情，空账本主要操作引导 AI 记账。
+**明细**：[home/index.vue](src/pages/home/index.vue) 使用黄色页头、月份/日历入口/搜索工具、白色月汇总卡和鸭子 AI 邀请入口。快捷区连接对话、统计、支付方式和分类管理。下方支持全部/支出/收入与关键词筛选，显示分组收支小计和金额正负号。点击日历进入 [calendar/index.vue](src/pages/calendar/index.vue) 查看每日账单，点击账单进入独立详情，空账本主要操作引导 AI 记账。
 
 **AI 聊天**：[ai-chat/index.vue](src/pages/ai-chat/index.vue) 是独立页面，以“账伴小鸭”为助手，黄色头部配返回和会话历史入口，消息区使用双方气泡，不展示 tabBar。发送中显示“正在发送”，收到后端持久接收确认后显示“已发送 · 后台处理中”，明确可以离开。完成后自动展示真实账单卡片或补充信息的问题，卡片可打开详情、编辑或二次确认删除。手动记账是快捷区的次入口；处理失败可重试原消息，也可修改后重新发送，尚未确认接收的消息不能直接丢弃。
 
@@ -65,7 +65,7 @@ H5 保留框架原生 4 tab，在底栏上方居中展示 [H5ChatEntry.vue](src/
 
 **资产**：[assets/index.vue](src/pages/assets/index.vue) 当前展示所选月份总收入、总支出和净流入，再按支付方式汇总并展开真实账单。未指定和已停用/缺失的支付方式仍保留对应记录。点击账单进入详情；空状态的记账入口进入 AI 聊天。页面明确注明“净流入不等于账户余额”和“不包含期初余额”，不提供虚构的真实资产余额。
 
-**我的与分类设置**：[manage/index.vue](src/pages/manage/index.vue) 显示鸭子头像、真实昵称或默认账本名、脱敏手机号，以及 AI、统计、分类和支付方式入口。[category-settings/index.vue](src/pages/category-settings/index.vue) 是独立非 tab 页面，保留 `section/type/add` 进入状态、分类收支切换、支付方式列表、内联新增和返回路径。名称最多 30 字，成功新增通知其他 tab 更新；没有新增分类编辑、删除和启停能力。导入、导出、隐私账户入口仍标注未开放；退出登录需确认。
+**我的与分类设置**：[manage/index.vue](src/pages/manage/index.vue) 显示鸭子头像、真实昵称或默认账本名、脱敏手机号，以及 AI、统计、分类和支付方式入口。[category-settings/index.vue](src/pages/category-settings/index.vue) 是独立非 tab 页面，保留 `section/type/add` 进入状态、分类收支切换、支付方式列表、内联新增和返回路径。名称最多 30 字，成功新增通知其他 tab 更新；[data-management/index.vue](src/pages/data-management/index.vue) 提供 CSV/JSON 导入预览、错误反馈、重复跳过和确认入账，以及按范围/类型导出并保存文件。隐私账户入口仍标注未开放；退出登录需确认。
 
 **登录与未开放页**：[login/index.vue](src/pages/login/index.vue) 初始 `initializing` 阶段仅呈现黄色品牌页、文字字标与“正在打开你的账本”加载提示。自动身份验证成功后直接进入账本，不先闪出登录按钮；确实需要协议确认、手动登录、短信验证或错误重试时，才显示淡黄品牌区和白色验证卡。手机号和 4 位短信验证码绑定、发送冷却、限流与重新验证保持现有流程；H5 不支持微信身份验证时仍说明应在微信打开。协议正文尚未发布，点击如实说明。[unavailable/index.vue](src/pages/unavailable/index.vue) 返回失败时用 `goHome`；旧 AI 未开放入口会转至独立聊天页。
 
@@ -73,4 +73,4 @@ H5 保留框架原生 4 tab，在底栏上方居中展示 [H5ChatEntry.vue](src/
 
 前端与后端真实 AI 接口已经集成；本轮尚未完成真实模型调用、真实账号的短信送达和微信真机端到端验证。自动化用例覆盖认证、账单、设置、统计、导航和 AI 等行为，但不等于模型解析质量或视觉验收。
 
-最新 183 项测试、类型检查、H5 与微信小程序构建通过；已核对编译产物的动态导航尺寸、微信 Canvas 2D 分支和手动记账自定义键盘。**尚未完成截图视觉 QA**。微信原生 tabBar、H5 浮动入口、CalendarSheet 覆盖层、Canvas/SVG、软键盘、安全区及不同设备字体仍需实机检查。
+最新 239 项前端测试、类型检查和日历页面机械检测通过；后端账伴测试 77 项通过。当前环境的 H5/微信小程序构建因 uni 工具链 `spawn EPERM` 未完成，尚未完成截图视觉 QA。微信原生 tabBar、H5 浮动入口、CalendarSheet 覆盖层、文件选择/保存、Canvas/SVG、软键盘、安全区及不同设备字体仍需实机检查。

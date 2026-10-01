@@ -3,11 +3,13 @@
     { "path": "pages/startup/index", "style": { "navigationStyle": "custom", "disableScroll": true } },
     { "path": "pages/login/index", "style": { "navigationStyle": "custom" } },
     { "path": "pages/home/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
+    { "path": "pages/calendar/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
     { "path": "pages/assets/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
     { "path": "pages/ai-chat/index", "style": { "navigationStyle": "custom", "disableScroll": true, "app-plus": { "softinputMode": "adjustResize" } } },
     { "path": "pages/statistics/index", "style": { "navigationStyle": "custom", "enablePullDownRefresh": true } },
     { "path": "pages/manage/index", "style": { "navigationStyle": "custom" } },
     { "path": "pages/category-settings/index", "style": { "navigationStyle": "custom" } },
+    { "path": "pages/data-management/index", "style": { "navigationStyle": "custom" } },
     { "path": "pages/record-editor/index", "style": { "navigationStyle": "custom" } },
     { "path": "pages/record-detail/index", "style": { "navigationStyle": "custom" } },
     { "path": "pages/unavailable/index", "style": { "navigationStyle": "custom" } }

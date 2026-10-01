@@ -18,6 +18,7 @@ const accountLabel = computed(() => {
 })
 const openSettings = (section: 'categories' | 'payments') => { if (ensureLogin()) uni.navigateTo({ url: `/pages/category-settings/index?section=${section}` }) }
 const openFeature = (feature: string) => { if (ensureLogin()) uni.navigateTo({ url: `/pages/unavailable/index?feature=${encodeURIComponent(feature)}` }) }
+const openDataManagement = (mode: 'import' | 'export') => { if (ensureLogin()) uni.navigateTo({ url: `/pages/data-management/index?mode=${mode}` }) }
 const openStatistics = () => { if (ensureLogin()) uni.switchTab({ url: '/pages/statistics/index' }) }
 onShow(() => syncNativeTab(3))
 </script>
@@ -36,8 +37,8 @@ onShow(() => syncNativeTab(3))
 
       <text class="section-label">数据与服务</text>
       <view class="card menu-card">
-        <button class="menu-row" @tap="openFeature('账单导入')"><view class="menu-icon"><AppIcon name="upload" :size="34" color="#292A25" /></view><text class="menu-name">导入账单</text><text class="unavailable-tag">暂未开放</text><AppIcon name="chevron-right" :size="26" color="#75756B" /></button>
-        <button class="menu-row" @tap="openFeature('数据导出')"><view class="menu-icon"><AppIcon name="download" :size="34" color="#292A25" /></view><text class="menu-name">导出数据</text><text class="unavailable-tag">暂未开放</text><AppIcon name="chevron-right" :size="26" color="#75756B" /></button>
+        <button class="menu-row" @tap="openDataManagement('import')"><view class="menu-icon"><AppIcon name="upload" :size="34" color="#292A25" /></view><text class="menu-name">导入账单</text><AppIcon name="chevron-right" :size="26" color="#75756B" /></button>
+        <button class="menu-row" @tap="openDataManagement('export')"><view class="menu-icon"><AppIcon name="download" :size="34" color="#292A25" /></view><text class="menu-name">导出数据</text><AppIcon name="chevron-right" :size="26" color="#75756B" /></button>
         <button class="menu-row" @tap="openFeature('隐私与账户设置')"><view class="menu-icon"><AppIcon name="shield" :size="34" color="#292A25" /></view><text class="menu-name">隐私与账户</text><text class="unavailable-tag">暂未开放</text><AppIcon name="chevron-right" :size="26" color="#75756B" /></button>
       </view>
       <text class="profile-footer">好好记账，好好生活</text>

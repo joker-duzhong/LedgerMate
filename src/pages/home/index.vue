@@ -5,7 +5,6 @@ import AppIcon from '@/components/AppIcon.vue'
 import CategoryIcon from '@/components/CategoryIcon.vue'
 import H5ChatEntry from '@/components/H5ChatEntry.vue'
 import MonthPicker from '@/components/MonthPicker.vue'
-import CalendarSheet from '@/components/CalendarSheet.vue'
 import { useHomeLedger } from '@/composables/useHomeLedger'
 import { useNavigationLayout } from '@/composables/useNavigationLayout'
 import { formatMoney } from '@/utils/format'
@@ -13,11 +12,10 @@ import { currentMonth, dayTitle, weekday } from '@/utils/ledger'
 import { goChat, syncNativeTab } from '@/utils/navigation'
 import { ensureLogin } from '@/utils/authNavigation'
 
-const { month, selectedDate, type, keyword, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, categoryNames, categoryById, isGuest, load, resume, pause, dispose } = useHomeLedger()
+const { month, type, keyword, loading, loaded, loadedMonth, errorMessage, loadedCount, totalCount, monthRecords, visibleRecords, groups, totals, categoryNames, categoryById, isGuest, load, resume, pause, dispose } = useHomeLedger()
 const { navigationStyle } = useNavigationLayout()
 const searchOpen = ref(false)
-const calendarOpen = ref(false)
-const filtered = computed(() => type.value !== 'all' || Boolean(keyword.value.trim()) || Boolean(selectedDate.value))
+const filtered = computed(() => type.value !== 'all' || Boolean(keyword.value.trim()))
 const hasCurrentData = computed(() => loaded.value && loadedMonth.value === month.value)
 const monthPeriod = computed(() => {
   const [year, index] = month.value.split('-').map(Number)
@@ -25,8 +23,8 @@ const monthPeriod = computed(() => {
 })
 const money = (value: number) => hasCurrentData.value ? formatMoney(value) : '—'
 const openRecord = (id: string) => { if (ensureLogin()) uni.navigateTo({ url: '/pages/record-detail/index?id=' + encodeURIComponent(id) }) }
-const resetFilter = () => { if (!ensureLogin()) return; type.value = 'all'; keyword.value = ''; selectedDate.value = '' }
-const selectDate = (value: string) => { if (!ensureLogin()) return; month.value = value.slice(0, 7); selectedDate.value = value }
+const resetFilter = () => { if (!ensureLogin()) return; type.value = 'all'; keyword.value = '' }
+const openCalendar = () => { if (ensureLogin()) uni.navigateTo({ url: `/pages/calendar/index?month=${encodeURIComponent(month.value)}` }) }
 const manage = (section: string) => { if (ensureLogin()) uni.navigateTo({ url: '/pages/category-settings/index?section=' + section }) }
 const openStats = () => { if (ensureLogin()) uni.switchTab({ url: '/pages/statistics/index' }) }
 const bookMenu = () => { if (ensureLogin()) uni.showActionSheet({ itemList: ['我的账本 · 当前账本', '账本设置'], success: ({ tapIndex }) => { if (tapIndex === 1) uni.switchTab({ url: '/pages/manage/index' }) } }) }
@@ -45,7 +43,7 @@ onUnload(dispose)
     <view class="toolbar">
       <MonthPicker v-model="month" :before-change="ensureLogin" />
       <view class="toolbar-actions">
-        <button class="tool-button" aria-label="按日期查看" @tap="ensureLogin() && (calendarOpen = true)"><AppIcon name="calendar" :size="38" color="#5B4A16" /></button>
+        <button class="tool-button" aria-label="打开日历视图" @tap="openCalendar"><AppIcon name="calendar" :size="38" color="#5B4A16" /></button>
         <button class="tool-button" aria-label="搜索账单" @tap="ensureLogin() && (searchOpen = !searchOpen)"><AppIcon name="search" :size="36" color="#5B4A16" /></button>
       </view>
     </view>
@@ -71,7 +69,6 @@ onUnload(dispose)
       <text v-if="hasCurrentData">{{ visibleRecords.length }} 笔</text>
     </view>
     <view v-if="searchOpen && !isGuest" class="search-field"><AppIcon name="search" :size="32" /><input v-model="keyword" placeholder="搜索分类、备注、金额" maxlength="80" confirm-type="search" /><button v-if="keyword" class="icon-button" @tap="ensureLogin() && (keyword = '')"><AppIcon name="close" :size="26" /></button></view>
-    <button v-if="selectedDate" class="date-filter" @tap="ensureLogin() && (selectedDate = '')">{{ selectedDate }} · 查看整月<AppIcon name="close" :size="24" /></button>
     <view v-if="loading" class="load-line">{{ hasCurrentData ? '正在更新账单…' : totalCount ? '正在整理 ' + loadedCount + ' / ' + totalCount + ' 笔记录' : '正在打开你的账本…' }}</view>
     <view v-if="errorMessage" class="form-error"><text>{{ errorMessage }}</text><button @tap="ensureLogin() && load(true)">重试</button></view>
     <view v-if="!loading && !errorMessage && !visibleRecords.length" class="card state-card"><image class="empty-duck" src="/static/assistant-duck.png" /><text class="state-title">{{ isGuest ? '登录后查看你的账单' : filtered ? '这里还没有匹配的账单' : '从第一笔小日常开始' }}</text><text class="state-copy">{{ isGuest ? '先看看记账、收支统计和分类管理，登录后开始记录。' : filtered ? '试试其他日期或关键词。' : '说说「午饭35元」，帮你整理这一笔。' }}</text><button class="primary-button" @tap="filtered ? resetFilter() : goChat()">{{ isGuest ? '登录并开始记账' : filtered ? '清除筛选' : '快速记一笔' }}</button></view>
@@ -86,7 +83,6 @@ onUnload(dispose)
       </view>
     </view>
     <text v-if="hasCurrentData && monthRecords.length" class="list-end">按创建顺序排列 · 一笔一记，生活有迹</text>
-    <CalendarSheet v-model:show="calendarOpen" :model-value="selectedDate || month + '-01'" mode="date" @confirm="selectDate" />
     <H5ChatEntry />
   </view>
 </template>
@@ -95,7 +91,7 @@ onUnload(dispose)
 @import '@/styles/theme.scss';
 .home-page { position: relative; padding: var(--app-status-bar-height, 44px) 30rpx 0; @include tab-page-bottom; }
 .sunshine { position: absolute; z-index: 0; top: 0; left: 0; right: 0; height: 400rpx; border-radius: 0 0 48rpx 48rpx; background: #FFE477; pointer-events: none; }
-.home-top, .toolbar, .overview, .filter-bar, .search-field, .date-filter, .load-line, .records-card, .list-end, .form-error, .state-card { position: relative; }
+.home-top, .toolbar, .overview, .filter-bar, .search-field, .load-line, .records-card, .list-end, .form-error, .state-card { position: relative; }
 .home-top { display: flex; align-items: center; margin-bottom: 8rpx; }
 .book-pill { display: flex; align-items: center; gap: 10rpx; margin: 0; padding: 0 24rpx; min-height: 62rpx; background: #FFF0A8; border: 2rpx solid #DCC577; border-radius: 40rpx; font-size: 27rpx; line-height: 62rpx; color: $ink; }
 .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 14rpx; margin: 0 0 22rpx; }
@@ -125,7 +121,6 @@ onUnload(dispose)
 .filters button.active { background: $brand; color: $ink; }
 .search-field { display: flex; align-items: center; gap: 14rpx; min-height: 86rpx; margin-bottom: 20rpx; padding: 0 24rpx; border-radius: 24rpx; background: #FFF; border: 1rpx solid $line; }
 .search-field input { flex: 1; min-width: 0; font-size: 27rpx; }.search-field .icon-button { width: 48rpx; }
-.date-filter { display: flex; align-items: center; gap: 12rpx; margin: 0 0 20rpx; padding: 10rpx 20rpx; width: fit-content; border-radius: 30rpx; background: $brand-soft; color: $ink; font-size: 23rpx; }
 .load-line { padding: 12rpx; color: $muted; font-size: 24rpx; text-align: center; }
 .form-error button { margin: 8rpx 0 0; padding: 0; background: transparent; color: $danger; text-decoration: underline; font-size: 26rpx; }
 .records-card { padding: 0 30rpx 18rpx; box-shadow: none; }
