@@ -96,13 +96,46 @@ test('missing APIs and synchronous native failures cannot report success or hang
   assert.equal(unsupported.calls.writes.length, 0)
   const writeFailure = exportHarness()
   writeFailure.api.getFileSystemManager = () => { throw new Error('native unavailable') }
-  await assert.rejects(writeFailure.save(), /文件写入失败/)
+  await assert.rejects(writeFailure.save(), /文件写入失败：native unavailable/)
   const shareFailure = exportHarness()
   shareFailure.api.shareFileMessage = () => { throw new Error('native unavailable') }
   const pending = shareFailure.save()
-  const rejected = assert.rejects(pending, /文件分享失败/)
+  const rejected = assert.rejects(pending, /文件分享失败：native unavailable/)
   shareFailure.calls.writes[0].success()
   await rejected
+})
+
+test('native failures preserve the API reason and error code without serializing other fields', async () => {
+  for (const stage of ['write', 'share', 'save']) {
+    const h = exportHarness(stage === 'save' ? 'windows' : 'ios')
+    const pending = h.save()
+    const reason = `${stage}:fail access denied`
+    const rejected = assert.rejects(pending, (error) => {
+      assert.ok(error.message.includes(reason))
+      assert.match(error.message, /错误码 101/)
+      assert.doesNotMatch(error.message, /internal-context/)
+      return true
+    })
+    if (stage !== 'write') {
+      h.calls.writes[0].success()
+      await flush()
+    }
+    const action = stage === 'write' ? h.calls.writes[0] : stage === 'save' ? h.calls.disks[0] : h.calls.shares[0]
+    action.fail({ errMsg: reason, errno: 101, context: 'internal-context' })
+    await rejected
+  }
+})
+
+test('native failures retain errCode-only responses and clearly identify missing details', async () => {
+  for (const [error, expected] of [[{ errCode: 0 }, /错误码 0/], [{}, /微信未返回具体原因/]]) {
+    const h = exportHarness()
+    const pending = h.save()
+    const rejected = assert.rejects(pending, expected)
+    h.calls.writes[0].success()
+    await flush()
+    h.calls.shares[0].fail(error)
+    await rejected
+  }
 })
 
 function exportPageHarness() {
@@ -131,7 +164,7 @@ function exportPageHarness() {
   }
   vm.runInNewContext(outputText, {
     module, exports: module.exports, Error, wx: h.api,
-    uni: { getSystemInfoSync: () => ({ platform: 'ios' }), showToast: (options) => h.calls.toasts.push(options) },
+    uni: { getDeviceInfo: () => ({ platform: 'ios' }), showToast: (options) => h.calls.toasts.push(options) },
     require: (name) => Object.hasOwn(mocks, name) ? mocks[name] : h.load('src/' + name.slice(2) + '.ts'),
   }, { filename })
   return { ...h, page: module.exports }
@@ -176,4 +209,17 @@ test('export page exposes failure, permits retry, and treats cancellation as neu
   assert.equal(h.page.resultMessage.value, '')
   assert.equal(h.page.exporting.value, false)
   assert.match(h.calls.toasts[0].title, /已取消/)
+})
+
+test('export page exposes the actual native sharing error instead of asking to retry on a phone', async () => {
+  const h = exportPageHarness()
+  const pending = h.page.downloadExport()
+  await flush()
+  h.calls.writes[0].success()
+  await flush()
+  h.calls.shares[0].fail({ errMsg: 'shareFileMessage:fail access denied', errno: 101 })
+  await pending
+  assert.equal(h.page.errorMessage.value, '文件分享失败：shareFileMessage:fail access denied；错误码 101')
+  assert.equal(h.page.resultMessage.value, '')
+  assert.equal(h.page.exporting.value, false)
 })

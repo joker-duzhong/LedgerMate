@@ -136,7 +136,7 @@ const saveExport = async (result: ExportResult): Promise<ExportFileOutcome> => {
   // #endif
   // #ifdef MP-WEIXIN
   const wxApi = (globalThis as unknown as { wx?: WeChatExportApi }).wx
-  const platform = (() => { try { return uni.getSystemInfoSync().platform } catch { return '' } })()
+  const platform = (() => { try { return uni.getDeviceInfo().platform } catch { return '' } })()
   return saveWeChatExport(wxApi, platform, result)
   // #endif
   // #ifndef H5
@@ -172,7 +172,7 @@ onShow(() => { ensureLogin() })
     <text class="page-subtitle">把账单带进来，也把自己的数据带走</text>
     <view class="mode-switch segmented"><button :class="{ active: mode === 'import' }" @tap="switchMode('import')">导入账单</button><button :class="{ active: mode === 'export' }" @tap="switchMode('export')">导出数据</button></view>
 
-    <view v-if="errorMessage" class="form-error" role="alert"><text>{{ errorMessage }}</text></view>
+    <view v-if="errorMessage" class="form-error" role="alert"><text selectable>{{ errorMessage }}</text></view>
     <view v-if="resultMessage" class="result-message"><AppIcon name="check" :size="28" color="#188544" /><text>{{ resultMessage }}</text></view>
 
     <template v-if="mode === 'import'">

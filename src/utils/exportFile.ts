@@ -2,7 +2,20 @@ import type { ExportResult } from '@/types/api'
 
 interface FileCallbacks {
   success: () => void
-  fail: (error: { errMsg?: string }) => void
+  fail: (error: unknown) => void
+}
+
+const nativeErrorDetail = (error: unknown): string => {
+  if (!error || typeof error !== 'object') return typeof error === 'string' ? error : ''
+  const detail = error as { errMsg?: unknown; message?: unknown; errno?: unknown; errCode?: unknown }
+  const message = typeof detail.errMsg === 'string' ? detail.errMsg : typeof detail.message === 'string' ? detail.message : ''
+  const code = detail.errno ?? detail.errCode
+  return [message, typeof code === 'number' || typeof code === 'string' ? `错误码 ${code}` : ''].filter(Boolean).join('；')
+}
+
+const exportError = (message: string, error: unknown): Error => {
+  const detail = nativeErrorDetail(error)
+  return new Error(`${message}：${detail || '微信未返回具体原因，请重试'}`)
 }
 
 export interface WeChatExportApi {
@@ -23,21 +36,21 @@ export const saveWeChatExport = async (api: WeChatExportApi | undefined, platfor
   const filePath = `${root}/${result.file_name}`
 
   await new Promise<void>((resolve, reject) => {
-    const fail = () => reject(new Error('文件写入失败，请检查可用空间后重试'))
+    const fail = (error: unknown) => reject(exportError('文件写入失败', error))
     try {
       api.getFileSystemManager!().writeFile({ filePath, data: result.content, encoding: 'utf8', success: () => resolve(), fail })
-    } catch { fail() }
+    } catch (error) { fail(error) }
   })
 
   return new Promise<ExportFileOutcome>((resolve, reject) => {
     const fail: FileCallbacks['fail'] = (error) => {
-      if (/cancel/i.test(error?.errMsg || '')) { resolve('cancelled'); return }
-      reject(new Error(saveToDisk ? '文件保存失败，请重试' : '文件分享失败，请在微信真机中重试'))
+      if (/\b(cancel|canceled|cancelled)\b/i.test(nativeErrorDetail(error))) { resolve('cancelled'); return }
+      reject(exportError(saveToDisk ? '文件保存失败' : '文件分享失败', error))
     }
     try {
       // saveFileToDisk 仅支持 PC；CSV/JSON 不能使用 openDocument 预览。
       if (saveToDisk) api.saveFileToDisk!({ filePath, success: () => resolve('saved'), fail })
       else api.shareFileMessage!({ filePath, fileName: result.file_name, success: () => resolve('shared'), fail })
-    } catch { fail({}) }
+    } catch (error) { fail(error) }
   })
 }
